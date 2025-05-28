@@ -1,3 +1,4 @@
+
 .hero-container .hero-wrapper {
   max-width: unset;
   padding: 0;
@@ -33,5 +34,93 @@
 @media (width >= 900px) {
   .hero {
     padding: 40px 32px;
+  }
+}
+
+.hero.hero4 {
+  background: #F4FFE3;
+  border: 2px solid #C5F23F;
+  position: relative;
+  width: 100%;
+  min-height: 400px;
+  overflow: hidden;
+  box-sizing: border-box;
+  padding: 0;
+}
+
+/* Ensure hero content is full width and image fills parent */
+.hero.hero4 > div,
+.hero.hero4 > div > div {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  position: static;
+}
+
+/* Background image setup */
+.hero.hero4 > div > div > p {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.hero.hero4 picture,
+.hero.hero4 img {
+  display: block;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+  object-fit: cover;
+  z-index: 1;
+  pointer-events: none;
+  box-sizing: border-box;
+}
+
+/* Text container: slightly larger font, more vertical padding and a touch more left margin */
+.hero.hero4 h2 {
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #fff;
+  border-radius: 24px;
+  padding: 36px 40px;
+  margin-left: 36px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.04);
+  color: #222;
+  font-size: 2.65rem;
+  font-family: var(--heading-font-family);
+  font-weight: 700;
+  line-height: 1.13;
+  max-width: 360px;
+  box-sizing: border-box;
+  word-break: break-word;
+  white-space: normal;
+  margin-top: 0;
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+  .hero.hero4 h2 {
+    padding: 18px 10px;
+    margin-left: 3vw;
+    font-size: 1.2rem;
+    max-width: 90vw;
+  }
+  .hero.hero4,
+  .hero.hero4 picture,
+  .hero.hero4 img {
+    min-height: 200px;
   }
 }
