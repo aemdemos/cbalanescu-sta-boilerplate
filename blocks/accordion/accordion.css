@@ -1,3 +1,4 @@
+
 .accordion details {
   border: 1px solid #dadada;
 }
@@ -58,4 +59,148 @@
 .accordion details[open] .accordion-item-body {
   border-top: 1px solid #dadada;
   background-color: var(--background-color);
+}
+
+.accordion.accordion5 {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  background: #fff;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  gap: 0;
+  min-height: 95px;
+  align-items: stretch;
+}
+
+.accordion.accordion5 > details.accordion-item {
+  flex: 1 1 0;
+  min-width: 0;
+  position: relative;
+  border: none;
+  background: #fff;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-shadow: none;
+  padding: 0;
+}
+
+.accordion.accordion5 > details.accordion-item + details.accordion-item {
+  border-left: 1px solid #d9f99d;
+}
+
+.accordion.accordion5 details.accordion-item summary {
+  padding: 28px 24px 28px 24px;
+  background: none;
+  border: none;
+  outline: none;
+  margin: 0;
+  min-height: 0;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  list-style: none;
+  position: relative;
+  box-shadow: none;
+  height: 100%;
+}
+
+.accordion.accordion5 details.accordion-item summary::-webkit-details-marker,
+.accordion.accordion5 details.accordion-item summary::after {
+  display: none;
+}
+
+.accordion.accordion5 details.accordion-item summary:focus,
+.accordion.accordion5 details.accordion-item summary:hover {
+  background: none;
+}
+
+.accordion.accordion5 .button-container {
+  padding: 0;
+  margin: 0;
+  text-align: left;
+  display: block;
+  width: 100%;
+}
+
+.accordion.accordion5 .button-container .button,
+.accordion.accordion5 .button-container a.button:any-link {
+  all: unset;
+  font-family: var(--body-font-family);
+  display: inline-block;
+  color: #22262a;
+  width: auto;
+  cursor: pointer;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.22;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  text-align: left;
+  vertical-align: baseline;
+  white-space: normal;
+  box-sizing: border-box;
+  letter-spacing: -0.01em;
+  word-break: break-word;
+}
+
+.accordion.accordion5 .button-container .button::first-line {
+  all: unset;
+}
+
+.accordion.accordion5 .button-container .button::after {
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 4px;
+  width: 14px;
+  height: 14px;
+  background: url('data:image/svg+xml;utf8,<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M4 6l4 4 4-4" stroke="%23a80425" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>') no-repeat center/contain;
+  content: "";
+  margin-bottom: 1px;
+}
+
+.accordion.accordion5 > details.accordion-item:last-child {
+  position: relative;
+}
+.accordion.accordion5 > details.accordion-item:last-child::after {
+  content: "";
+  display: block;
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  bottom: 0;
+  height: 4px;
+  background: #a80425;
+  border-radius: 0;
+  z-index: 2;
+}
+
+.accordion.accordion5 details.accordion-item .accordion-item-body {
+  display: none;
+  padding: 0;
+  border: none;
+  background: none;
+}
+
+.accordion.accordion5 > details.accordion-item {
+  min-height: 86px;
+}
+
+@media (max-width: 900px) {
+  .accordion.accordion5 {
+    flex-direction: column;
+  }
+  .accordion.accordion5 > details.accordion-item + details.accordion-item {
+    border-left: none;
+    border-top: 1px solid #d9f99d;
+  }
+  .accordion.accordion5 > details.accordion-item:last-child::after {
+    left: 24px;
+    right: 24px;
+  }
 }
