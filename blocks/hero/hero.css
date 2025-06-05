@@ -1,4 +1,5 @@
 
+
 .hero-container .hero-wrapper {
   max-width: unset;
   padding: 0;
@@ -6,8 +7,16 @@
 
 .hero {
   position: relative;
-  padding: 40px 24px;
-  min-height: 300px;
+  background: #eaf7d7;
+  border: 3px solid #bfe140;
+  box-sizing: border-box;
+  padding: 0;
+  width: 100%;
+  min-height: 410px;
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-start;
+  overflow: hidden;
 }
 
 .hero h1 {
@@ -124,3 +133,94 @@
     min-height: 200px;
   }
 }
+
+.hero > div {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+  background: none;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.hero > div > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  background: #fff;
+  border-radius: 200px 64px 200px 200px / 140px 64px 140px 140px;
+  padding: 84px 80px 84px 76px;
+  margin-left: 96px;
+  margin-right: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  max-width: 600px;
+  min-width: 410px;
+  min-height: 72%;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.04);
+  z-index: 2;
+  box-sizing: border-box;
+}
+
+.hero picture,
+.hero img {
+  display: none;
+}
+
+.hero > div {
+  background-image: url('./media_1750c5492ce5c4d722e73ad3439637d43af898c9e.png?width=2000&format=png&optimize=medium');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: right center;
+  min-height: 410px;
+}
+
+.hero h2 {
+  font-family: var(--heading-font-family);
+  font-size: 3rem;
+  font-weight: 700;
+  color: #232323;
+  margin: 0 0 50px 0;
+  line-height: 1.08;
+}
+
+.hero > div > div > p {
+  font-family: var(--body-font-family);
+  font-size: 1.28rem;
+  color: #232323;
+  margin: 0;
+  line-height: 1.52;
+}
+
+@media (max-width: 900px) {
+  .hero {
+    min-height: 220px;
+    border-width: 2px;
+  }
+  .hero > div > div {
+    margin-left: 8px;
+    margin-right: 8px;
+    padding: 18px 7vw 18px 7vw;
+    max-width: 99vw;
+    min-width: 0;
+    border-radius: 40px 20px 40px 40px / 36px 20px 36px 36px;
+  }
+  .hero > div {
+    background-position: center top;
+    min-height: 220px;
+  }
+  .hero h2 {
+    font-size: 1.18rem;
+    margin-bottom: 14px;
+  }
+  .hero > div > div > p {
+    font-size: 0.96rem;
+  }
+}
+
