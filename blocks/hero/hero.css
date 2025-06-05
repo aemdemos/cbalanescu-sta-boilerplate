@@ -223,3 +223,145 @@
   }
 }
 
+
+/* --- GENERATED CSS --- */
+
+.hero-container > .hero-wrapper {
+  max-width: unset;
+  padding: 0;
+}
+
+/* Main hero block: full width/height, no default margin/padding */
+.hero.hero4.block {
+  position: relative;
+  width: 100%;
+  min-height: 407px;
+  background: #f2f9e3;
+  border: 2px solid #c7f36a;
+  box-sizing: border-box;
+  overflow: hidden;
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-start;
+  margin: 0;
+  padding: 0;
+}
+
+/* Background image: covers entire hero */
+.hero.hero4.block > div > div > p {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+.hero.hero4.block picture,
+.hero.hero4.block img {
+  display: block;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+  pointer-events: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Outer flex row for vertical and horizontal alignment */
+.hero.hero4.block > div {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  height: 100%;
+  min-height: 407px;
+  margin: 0;
+  padding: 0;
+  background: none;
+  box-sizing: border-box;
+}
+
+/* Inner container: ensure full height, remove margin/padding */
+.hero.hero4.block > div > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  height: 100%;
+  min-height: 407px;
+  background: none;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Headline card: perfectly flush left and vertically centered */
+.hero.hero4.block h2 {
+  position: relative;
+  align-self: flex-start;
+  background: #fff;
+  border-radius: 24px;
+  padding: 36px 40px;
+  color: #222222;
+  font-family: var(--heading-font-family);
+  font-weight: 700;
+  font-size: 2.25rem;
+  line-height: 1.15;
+  max-width: 430px;
+  margin: 0;
+  margin-left: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  box-shadow: none;
+  z-index: 2;
+  box-sizing: border-box;
+  word-break: break-word;
+  white-space: normal;
+  left: 0;
+}
+
+/* Remove any left margin/padding so card is truly flush */
+.hero.hero4.block,
+.hero.hero4.block > div,
+.hero.hero4.block > div > div,
+.hero.hero4.block h2 {
+  padding-left: 0;
+  margin-left: 0;
+}
+
+/* Responsive adjustments for headline card */
+@media (max-width: 900px) {
+  .hero.hero4.block {
+    min-height: 220px;
+  }
+  .hero.hero4.block > div,
+  .hero.hero4.block > div > div {
+    min-height: 220px;
+  }
+  .hero.hero4.block h2 {
+    font-size: 1.18rem;
+    padding: 18px 10px;
+    max-width: 90vw;
+  }
+}
+
+/* --- MERGED .hero SELECTOR --- */
+.hero {
+  background: #eaf7d7;
+  border: 3px solid #bfe140;
+  box-sizing: border-box;
+  padding: 0;
+  width: 100%;
+  min-height: 410px;
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-start;
+  overflow: hidden;
+}
