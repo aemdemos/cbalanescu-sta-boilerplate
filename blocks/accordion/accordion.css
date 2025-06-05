@@ -1,4 +1,19 @@
 
+
+.accordion {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  background: #fff;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  gap: 0;
+  min-height: 120px;
+}
+
+/* --- BASE CSS --- */
+
 .accordion details {
   border: 1px solid #dadada;
 }
@@ -204,3 +219,138 @@
     right: 24px;
   }
 }
+
+/* --- GENERATED CSS --- */
+
+.accordion {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  background: #fff;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  gap: 0;
+  min-height: 120px;
+}
+
+.accordion > details.accordion-item {
+  flex: 1 1 0;
+  min-width: 0;
+  position: relative;
+  border: none;
+  background: #fff;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-shadow: none;
+  padding: 0;
+}
+
+.accordion > details.accordion-item + details.accordion-item {
+  border-left: 2px solid #D3EDB4;
+}
+
+/* Ensure left alignment and more vertical space */
+.accordion details.accordion-item summary {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  text-align: left;
+  padding: 36px 32px 36px 32px;
+  min-height: 112px;
+  width: 100%;
+  background: none;
+  border: none;
+  margin: 0;
+  box-shadow: none;
+  outline: none;
+  cursor: pointer;
+}
+
+/* Button container: full width, reset, left-aligned */
+.accordion .button-container {
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  display: block;
+  text-align: left;
+}
+
+/* Button: remove all: unset, restore visibility, left-aligned, visual prominence */
+.accordion .button-container .button,
+.accordion .button-container a.button:any-link {
+  font-family: var(--body-font-family);
+  display: inline-block;
+  background: none;
+  border: none;
+  outline: none;
+  color: #23272B;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.29;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  letter-spacing: -0.01em;
+  word-break: break-word;
+  vertical-align: middle;
+  white-space: normal;
+  box-sizing: border-box;
+  text-decoration: none;
+  max-width: 100%;
+}
+
+/* Remove any previous ::first-line overrides */
+.accordion .button-container .button::first-line,
+.accordion .button-container a.button:any-link::first-line {
+  font-size: inherit;
+  font-weight: inherit;
+  color: inherit;
+}
+
+/* Chevron arrow (same as before) */
+.accordion .button-container .button::after,
+.accordion .button-container a.button:any-link::after {
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 8px;
+  margin-bottom: 1px;
+  width: 8px;
+  height: 8px;
+  background: url('data:image/svg+xml;utf8,<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M4 6l4 4 4-4" stroke="%23A30D23" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>') no-repeat center/contain;
+}
+
+/* Underline for last item */
+.accordion > details.accordion-item:last-child {
+  position: relative;
+}
+.accordion > details.accordion-item:last-child::after {
+  display: block;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 6px;
+  background: #A30D23;
+  border-radius: 0;
+  z-index: 2;
+  content: "";
+}
+
+/* Responsive stacking fallback */
+@media (max-width: 900px) {
+  .accordion {
+    flex-direction: column;
+  }
+  .accordion > details.accordion-item + details.accordion-item {
+    border-left: none;
+    border-top: 2px solid #D3EDB4;
+  }
+  .accordion > details.accordion-item:last-child::after {
+    left: 0;
+    right: 0;
+  }
+}
+
