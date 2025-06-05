@@ -3,13 +3,15 @@
 .accordion {
   display: flex;
   flex-direction: row;
-  align-items: stretch;
+  align-items: flex-start;
+  justify-content: stretch;
   background: #fff;
+  padding: 0;
   border: none;
   box-shadow: none;
-  padding: 0;
+  width: 100%;
+  min-height: 0;
   gap: 0;
-  min-height: 120px;
 }
 
 /* --- BASE CSS --- */
@@ -222,54 +224,45 @@
 
 /* --- GENERATED CSS --- */
 
-.accordion {
-  display: flex;
-  flex-direction: row;
-  align-items: stretch;
-  background: #fff;
-  border: none;
-  box-shadow: none;
-  padding: 0;
-  gap: 0;
-  min-height: 120px;
-}
-
 .accordion > details.accordion-item {
   flex: 1 1 0;
   min-width: 0;
-  position: relative;
-  border: none;
   background: #fff;
+  border: none;
   margin: 0;
+  position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  align-items: flex-start;
+  justify-content: flex-start;
   box-shadow: none;
   padding: 0;
+  min-height: 0;
 }
 
 .accordion > details.accordion-item + details.accordion-item {
-  border-left: 2px solid #D3EDB4;
+  border-left: 2px solid #d6eb9e;
 }
 
-/* Ensure left alignment and more vertical space */
+/* Tighten vertical spacing to anchor content near the top */
 .accordion details.accordion-item summary {
   display: flex;
   align-items: flex-start;
   justify-content: flex-start;
-  text-align: left;
-  padding: 36px 32px 36px 32px;
-  min-height: 112px;
-  width: 100%;
+  flex-direction: column;
   background: none;
   border: none;
-  margin: 0;
   box-shadow: none;
   outline: none;
   cursor: pointer;
+  text-align: left;
+  padding: 0 24px 0 24px;
+  margin: 0;
+  width: 100%;
+  min-height: 0;
+  line-height: 1.05;
 }
 
-/* Button container: full width, reset, left-aligned */
 .accordion .button-container {
   padding: 0;
   margin: 0;
@@ -278,79 +271,114 @@
   text-align: left;
 }
 
-/* Button: remove all: unset, restore visibility, left-aligned, visual prominence */
 .accordion .button-container .button,
 .accordion .button-container a.button:any-link {
   font-family: var(--body-font-family);
-  display: inline-block;
+  display: block;
+  color: #22272b;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.12;
   background: none;
   border: none;
-  outline: none;
-  color: #23272B;
-  font-size: 18px;
-  font-weight: 600;
-  line-height: 1.29;
+  box-shadow: none;
   margin: 0;
   padding: 0;
   text-align: left;
   letter-spacing: -0.01em;
   word-break: break-word;
-  vertical-align: middle;
   white-space: normal;
-  box-sizing: border-box;
-  text-decoration: none;
   max-width: 100%;
 }
 
-/* Remove any previous ::first-line overrides */
+/* Simulate smaller Step label and larger heading */
 .accordion .button-container .button::first-line,
 .accordion .button-container a.button:any-link::first-line {
-  font-size: inherit;
-  font-weight: inherit;
-  color: inherit;
+  font-size: 12px;
+  font-weight: 400;
+  color: #22272b;
+  line-height: 1.25;
+  letter-spacing: 0.01em;
+  word-spacing: 0.25em;
 }
 
-/* Chevron arrow (same as before) */
+/* Try to force heading onto its own line by increasing line-height for ::first-line */
+.accordion .button-container .button::first-line,
+.accordion .button-container a.button:any-link::first-line {
+  line-height: 2.2;
+}
+
+/* Arrow alignment and sizing */
 .accordion .button-container .button::after,
 .accordion .button-container a.button:any-link::after {
   display: inline-block;
   vertical-align: middle;
-  margin-left: 8px;
-  margin-bottom: 1px;
-  width: 8px;
-  height: 8px;
-  background: url('data:image/svg+xml;utf8,<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M4 6l4 4 4-4" stroke="%23A30D23" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>') no-repeat center/contain;
+  margin-left: 7px;
+  margin-bottom: 0;
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 7px solid #a5072a;
 }
 
-/* Underline for last item */
+/* Remove underline/focus styling for .button */
+.accordion .button-container .button:focus,
+.accordion .button-container .button:active,
+.accordion .button-container a.button:focus,
+.accordion .button-container a.button:active {
+  outline: none;
+  box-shadow: none;
+  text-decoration: none;
+}
+
+/* Hide default summary marker */
+.accordion details.accordion-item summary::-webkit-details-marker,
+.accordion details.accordion-item summary::marker {
+  display: none;
+}
+
+/* Remove default margin from summary p */
+.accordion details.accordion-item summary p.button-container {
+  margin: 0;
+  padding: 0;
+}
+
+/* Red underline bar for last (active) item, pulled tight under text */
 .accordion > details.accordion-item:last-child {
   position: relative;
 }
 .accordion > details.accordion-item:last-child::after {
-  display: block;
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 6px;
-  background: #A30D23;
+  left: 24px;
+  right: 24px;
+  bottom: 1px;
+  height: 8px;
+  background: #a5072a;
   border-radius: 0;
   z-index: 2;
-  content: "";
+  display: block;
 }
 
-/* Responsive stacking fallback */
+/* Hide accordion item body by default */
+.accordion details.accordion-item .accordion-item-body {
+  display: none;
+  padding: 0;
+  border: none;
+  background: none;
+}
+
+/* Responsive: stack on small screens */
 @media (max-width: 900px) {
   .accordion {
     flex-direction: column;
   }
   .accordion > details.accordion-item + details.accordion-item {
     border-left: none;
-    border-top: 2px solid #D3EDB4;
+    border-top: 2px solid #d6eb9e;
   }
   .accordion > details.accordion-item:last-child::after {
-    left: 0;
-    right: 0;
+    left: 24px;
+    right: 24px;
   }
 }
-
