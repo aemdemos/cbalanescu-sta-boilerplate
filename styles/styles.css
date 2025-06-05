@@ -58,17 +58,6 @@
 @font-face {
   font-family:"Noto Sans Fallback";
   font-style:normal;
-  font-weight:400;
-  src:local("Arial");
-  ascent-override:100.41%;
-  descent-override:27.52%;
-  line-gap-override:0.00%;
-  size-adjust:106.47%;
-}
-
-@font-face {
-  font-family:"Noto Sans Fallback";
-  font-style:normal;
   font-weight:600;
   src:local("Arial Bold");
   ascent-override:108.63%;
@@ -90,13 +79,13 @@
 
 @font-face {
   font-family:"Noto Sans Fallback";
-  font-style:italic;
+  font-style:normal;
   font-weight:400;
-  src:local("Arial Italic");
-  ascent-override:106.59%;
-  descent-override:29.21%;
+  src:local("Arial");
+  ascent-override:100.41%;
+  descent-override:27.52%;
   line-gap-override:0.00%;
-  size-adjust:100.30%;
+  size-adjust:106.47%;
 }
 
 @font-face {
@@ -108,6 +97,17 @@
   descent-override:31.61%;
   line-gap-override:0.00%;
   size-adjust:92.70%;
+}
+
+@font-face {
+  font-family:"Noto Sans Fallback";
+  font-style:italic;
+  font-weight:400;
+  src:local("Arial Italic");
+  ascent-override:106.59%;
+  descent-override:29.21%;
+  line-gap-override:0.00%;
+  size-adjust:100.30%;
 }
 
 @font-face {
