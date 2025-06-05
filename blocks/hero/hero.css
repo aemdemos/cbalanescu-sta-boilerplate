@@ -6,14 +6,15 @@
 }
 
 .hero {
-  background: #f3ffe9;
-  border: 2px solid #d6ff5c;
-  width: 100vw;
-  min-height: 410px;
-  margin: 0;
-  padding: 0;
+  background: #eaf7d7;
+  border: 3px solid #bfe140;
   box-sizing: border-box;
-  position: relative;
+  padding: 0;
+  width: 100%;
+  min-height: 410px;
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-start;
   overflow: hidden;
 }
 
@@ -132,127 +133,93 @@
   }
 }
 
-
-/* Top pale green bar, sits above the image and card */
-.hero::before {
-  content: "";
-  display: block;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 42px;
-  background: #f3ffe9;
-  z-index: 2;
-}
-
-/* Layout for image and card side by side */
-.hero > div > div {
+.hero > div {
   display: flex;
   flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
   width: 100%;
-  min-height: 368px;
-  height: calc(100% - 42px);
+  height: 100%;
+  align-items: center;
   position: relative;
-  z-index: 3;
-  margin: 0;
+  z-index: 1;
+  background: none;
   padding: 0;
+  margin: 0;
   box-sizing: border-box;
-  margin-top: 42px;
 }
 
-/* Image wrapper (right side flex child) */
-.hero p {
-  flex: 1 1 0;
-  order: 2;
-  margin: 0;
-  padding: 0;
-  align-self: stretch;
+.hero > div > div {
   display: flex;
-  height: 100%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  background: #fff;
+  border-radius: 200px 64px 200px 200px / 140px 64px 140px 140px;
+  padding: 84px 80px 84px 76px;
+  margin-left: 96px;
+  margin-right: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  max-width: 600px;
+  min-width: 410px;
+  min-height: 72%;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.04);
+  z-index: 2;
+  box-sizing: border-box;
 }
 
 .hero picture,
-.hero picture img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  border: none;
-  margin: 0;
-  padding: 0;
+.hero img {
+  display: none;
 }
 
-/* Headline card (left side flex child) */
+.hero > div {
+  background-image: url('./media_1750c5492ce5c4d722e73ad3439637d43af898c9e.png?width=2000&format=png&optimize=medium');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: right center;
+  min-height: 410px;
+}
+
 .hero h2 {
-  position: relative;
-  z-index: 4;
-  order: 1;
-  flex: 0 1 370px;
-  align-self: center;
-  background: #fff;
-  border-radius: 20px;
-  margin-left: 56px;
-  margin-right: 0;
-  color: #333;
-  font-family: 'Nunito', 'Arial Rounded MT Bold', Arial, sans-serif;
+  font-family: var(--heading-font-family);
+  font-size: 3rem;
   font-weight: 700;
-  font-size: 2.1rem;
-  line-height: 1.15;
-  max-width: 370px;
-  min-width: 320px;
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  box-shadow: none;
-  padding: 34px 44px 34px 44px;
+  color: #232323;
+  margin: 0 0 50px 0;
+  line-height: 1.08;
 }
 
-/* Green accent bar as a visual element on the left of card */
-.hero h2::after {
-  display: block;
-  position: absolute;
-  left: -20px;
-  top: 20px;
-  bottom: 20px;
-  width: 14px;
-  border-radius: 8px;
-  background: #d6ff5c;
-  z-index: 1;
+.hero > div > div > p {
+  font-family: var(--body-font-family);
+  font-size: 1.28rem;
+  color: #232323;
+  margin: 0;
+  line-height: 1.52;
 }
 
-/* Responsive adjustments */
 @media (max-width: 900px) {
+  .hero {
+    min-height: 220px;
+    border-width: 2px;
+  }
   .hero > div > div {
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-    height: auto;
-    min-height: 0;
-    margin-top: 42px;
+    margin-left: 8px;
+    margin-right: 8px;
+    padding: 18px 7vw 18px 7vw;
+    max-width: 99vw;
+    min-width: 0;
+    border-radius: 40px 20px 40px 40px / 36px 20px 36px 36px;
+  }
+  .hero > div {
+    background-position: center top;
+    min-height: 220px;
   }
   .hero h2 {
-    margin-left: 3vw;
-    min-width: 0;
-    max-width: 90vw;
-    font-size: 1.2rem;
-    padding: 18px 10px 18px 28px;
+    font-size: 1.18rem;
+    margin-bottom: 14px;
   }
-  .hero h2::after {
-    left: -10px;
-    top: 10px;
-    bottom: 10px;
-    width: 10px;
-    border-radius: 6px;
-  }
-  .hero picture,
-  .hero picture img {
-    min-height: 180px;
-  }
-  .hero {
-    min-height: 200px;
+  .hero > div > div > p {
+    font-size: 0.96rem;
   }
 }
 
