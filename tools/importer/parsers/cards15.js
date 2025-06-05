@@ -1,53 +1,45 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  // Header row for the table matching the provided example
   const headerRow = ['Cards (cards15)'];
-
-  // Extracting child elements under the main container
-  const items = element.querySelectorAll(':scope > div.text-image-item');
-
   const rows = [headerRow];
+  // Find the cards container
+  const itemsContainer = element.querySelector('.teaser-block__items');
+  if (itemsContainer) {
+    const cards = itemsContainer.querySelectorAll(':scope > .teaser-item');
+    cards.forEach((card) => {
+      // First cell: image
+      const img = card.querySelector('img');
+      // Second cell: content
+      const contentEls = [];
 
-  items.forEach((item) => {
-    // Safely extract image element
-    const img = item.querySelector('img');
-    let imageElement;
-    if (img) {
-      imageElement = document.createElement('img');
-      imageElement.src = img.src;
-      imageElement.alt = img.alt;
-    } else {
-      imageElement = document.createElement('div');
-      imageElement.textContent = 'No image available';
-    }
-
-    // Safely extract text content
-    const content = item.querySelector('.text-image-item__content');
-    const textContent = document.createElement('div');
-
-    if (content) {
-      const title = content.querySelector('.text-image-item__title');
-      if (title) {
-        const titleElement = document.createElement('h3');
-        titleElement.textContent = title.textContent;
-        textContent.appendChild(titleElement);
+      // Title (as <strong>)
+      const titleEl = card.querySelector('.teaser-item__title');
+      if (titleEl) {
+        const strong = document.createElement('strong');
+        strong.textContent = titleEl.textContent.trim();
+        contentEls.push(strong);
+        contentEls.push(document.createElement('br'));
       }
-
-      const description = content.querySelector('.text-image-item__description');
-      if (description) {
-        // Directly append the description's innerHTML without additional wrapping
-        textContent.innerHTML += description.innerHTML;
+      // Description (prefer <p>)
+      const desc = card.querySelector('.teaser-item__desc');
+      if (desc) {
+        const p = desc.querySelector('p');
+        if (p) {
+          contentEls.push(p);
+        } else if (desc.textContent.trim()) {
+          contentEls.push(document.createTextNode(desc.textContent.trim()));
+        }
       }
-    } else {
-      textContent.textContent = 'No content available';
-    }
-
-    rows.push([imageElement, textContent]);
-  });
-
-  // Creating the table block
-  const block = WebImporter.DOMUtils.createTable(rows, document);
-
-  // Replacing the original element with the new block table
-  element.replaceWith(block);
+      // CTA (button/link)
+      const cta = card.querySelector('a.cta-link');
+      if (cta) {
+        contentEls.push(document.createElement('br'));
+        contentEls.push(cta);
+      }
+      // Add the row, referencing existing elements directly
+      rows.push([img, contentEls]);
+    });
+  }
+  const table = WebImporter.DOMUtils.createTable(rows, document);
+  element.replaceWith(table);
 }
