@@ -1,35 +1,32 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  // Define the header row based on the example provided
+  // Find all the direct teaser-icon-item children (each is a column)
+  const items = Array.from(element.querySelectorAll(':scope > .teaser-icon-item'));
+
+  // Header row: exactly one column, per example
   const headerRow = ['Columns (columns22)'];
 
-  // Extract the items inside the element using direct child selector
-  const items = Array.from(element.querySelectorAll(':scope > div.teaser-icon-item'));
-
-  // Map each item into rows containing relevant extracted content
-  const contentRows = items.map((item) => {
-    // Extract the image element
-    const img = item.querySelector('img');
-
-    // Extract the description div (handling possible missing content)
-    const description = item.querySelector('.teaser-icon-item__desc');
-
-    // Ensure the description's text content is included
-    return [
-      img, // Use the image element directly for semantic equivalence
-      description || document.createElement('div'), // Fallback to an empty div if description is missing
-    ];
+  // Content row: each cell is one column
+  const contentRow = items.map((item) => {
+    const cellContent = [];
+    const icon = item.querySelector('.teaser-icon-item__icon');
+    if (icon) cellContent.push(icon);
+    const desc = item.querySelector('.teaser-icon-item__desc');
+    if (desc && desc.textContent.trim()) {
+      // Use the first <p> or the desc div
+      const p = desc.querySelector('p');
+      if (p) {
+        cellContent.push(p);
+      } else {
+        cellContent.push(desc);
+      }
+    }
+    // Fallback: If no content, just empty string
+    return cellContent.length ? cellContent : '';
   });
 
-  // Combine header row and content rows into the final table data
-  const tableCells = [
-    headerRow,
-    ...contentRows,
-  ];
-
-  // Create the block table using the helper function
-  const blockTable = WebImporter.DOMUtils.createTable(tableCells, document);
-
-  // Replace the original element with the newly created block table
-  element.replaceWith(blockTable);
+  // Compose the cells array
+  const cells = [headerRow, contentRow];
+  const table = WebImporter.DOMUtils.createTable(cells, document);
+  element.replaceWith(table);
 }

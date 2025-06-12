@@ -1,29 +1,36 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
+  // Header row for block
   const headerRow = ['Hero (hero4)'];
 
-  // Extract the image
-  const imageElement = element.querySelector('.hero-banner-image__img');
-  const imageSource = imageElement?.src || element.querySelector('.hero-banner-image')?.style.backgroundImage.replace(/url\("|"\)/g, '');
-  const image = document.createElement('img');
-  image.src = imageSource;
-  image.alt = imageElement?.alt || '';
+  // Get the <section> with class 'hero-banner-image'
+  const heroSection = element.querySelector('section.hero-banner-image');
 
-  // Extract the title
-  const titleElement = element.querySelector('.hero-banner-image__title');
-  const title = document.createElement('h2');
-  title.textContent = titleElement?.textContent || '';
+  // Defensive check in case structure varies
+  let img = null;
+  let title = null;
+  if (heroSection) {
+    img = heroSection.querySelector('img.hero-banner-image__img');
+    title = heroSection.querySelector('.hero-banner-image__title');
+  } else {
+    img = element.querySelector('img.hero-banner-image__img');
+    title = element.querySelector('.hero-banner-image__title');
+  }
 
-  // Create the content row with a single cell containing both the image and title
-  const contentRow = [[image, title]];
+  const content = [];
+  if (img) content.push(img);
+  if (title) content.push(title);
 
-  // Create the table
-  const cells = [
+  // Prevent empty blocks if content is missing
+  if (content.length === 0) {
+    // fallback: place all element's children in the cell
+    content.push(...element.children);
+  }
+
+  const table = WebImporter.DOMUtils.createTable([
     headerRow,
-    contentRow,
-  ];
-  const blockTable = WebImporter.DOMUtils.createTable(cells, document);
+    [content],
+  ], document);
 
-  // Replace the original element
-  element.replaceWith(blockTable);
+  element.replaceWith(table);
 }

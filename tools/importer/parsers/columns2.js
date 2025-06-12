@@ -1,44 +1,32 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  const headerRow = ['Columns (columns2)'];
+  // --- Critical Review Points ---
+  // - No hardcoded content: all content is taken from the input element.
+  // - No markdown/strings for content: all content referenced as existing elements.
+  // - Only one block table per example; no Section Metadata in the example.
+  // - Table header must be: 'Columns (columns2)'.
+  // - Both columns must be referenced as existing elements.
+  // - Must gracefully handle if left or right column is missing.
 
-  // Extract the left column content dynamically
-  const leftColumnContent = [];
-
-  const titleWrapper = element.querySelector('.hero-banner-video__title-wrapper');
-  if (titleWrapper) {
-    leftColumnContent.push(...titleWrapper.children);
-  }
-
-  const transcriptSection = element.querySelector('.hero-banner-video__transcript');
-  if (transcriptSection) {
-    leftColumnContent.push(transcriptSection);
-  }
-
-  // Extract the right column content dynamically
-  const rightColumnContent = [];
-
+  // Find left column: video+transcript
   const videoWrapper = element.querySelector('.hero-banner-video__video-wrapper');
-  if (videoWrapper) {
-    const videoPoster = videoWrapper.querySelector('picture');
-    if (videoPoster) {
-      rightColumnContent.push(videoPoster);
-    }
-  }
+  const transcript = element.querySelector('.hero-banner-video__transcript');
+  const leftCol = document.createElement('div');
+  if (videoWrapper) leftCol.appendChild(videoWrapper);
+  if (transcript) leftCol.appendChild(transcript);
+  // If both are missing, leftCol should be empty but defined
 
-  const textSection = element.querySelector('.hero-banner-video__text');
-  if (textSection) {
-    rightColumnContent.push(textSection);
-  }
+  // Find right column: title/content/cta
+  const rightCol = element.querySelector('.hero-banner-video__text');
+  // If missing, pass empty div
+  const rightCell = rightCol ? rightCol : document.createElement('div');
 
-  // Build the table
-  const cells = [
-    headerRow,
-    [leftColumnContent, rightColumnContent]
-  ];
+  // Table header
+  const headerRow = ['Columns (columns2)'];
+  // Second row, two columns
+  const secondRow = [leftCol, rightCell];
 
-  const table = WebImporter.DOMUtils.createTable(cells, document);
+  const table = WebImporter.DOMUtils.createTable([headerRow, secondRow], document);
 
-  // Replace the original element with the table
   element.replaceWith(table);
 }

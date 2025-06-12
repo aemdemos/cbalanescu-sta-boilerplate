@@ -1,39 +1,49 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-    const headerRow = ['Cards (cards10)'];
+  const headerRow = ['Cards (cards10)'];
+  const rows = [headerRow];
 
-    const rows = Array.from(element.querySelectorAll(':scope > div')).map((teaserItem) => {
-        const image = teaserItem.querySelector('img');
-        const title = teaserItem.querySelector('.teaser-item__title');
-        const description = teaserItem.querySelector('.teaser-item__desc');
-        const link = teaserItem.querySelector('a');
+  // Get all direct .teaser-item children
+  const items = element.querySelectorAll(':scope > .teaser-item');
+  items.forEach(item => {
+    // Image for first cell (reference the DOM node directly)
+    const img = item.querySelector('img');
 
-        const textContent = [];
+    // Text content for second cell
+    const content = item.querySelector('.teaser-item__content');
+    const cellContent = [];
 
-        if (title) {
-            const heading = document.createElement('strong');
-            heading.textContent = title.textContent.trim();
-            textContent.push(heading);
+    // Title (as <strong> for heading style per example)
+    const titleEl = content && content.querySelector('.teaser-item__title');
+    if (titleEl && titleEl.textContent.trim()) {
+      const strong = document.createElement('strong');
+      strong.textContent = titleEl.textContent.trim();
+      cellContent.push(strong);
+      cellContent.push(document.createElement('br'));
+    }
+    // Description (keep all child nodes, reference if possible)
+    const descEl = content && content.querySelector('.teaser-item__desc');
+    if (descEl) {
+      descEl.childNodes.forEach(node => {
+        // Only include non-empty text or element nodes
+        if (node.nodeType === 1 || (node.nodeType === 3 && node.textContent.trim())) {
+          cellContent.push(node);
         }
+      });
+      cellContent.push(document.createElement('br'));
+    }
+    // CTA link, referenced directly
+    const ctaEl = content && content.querySelector('a');
+    if (ctaEl) {
+      cellContent.push(ctaEl);
+    }
 
-        if (description) {
-            const para = document.createElement('p');
-            para.textContent = description.textContent.trim();
-            textContent.push(para);
-        }
+    rows.push([
+      img,
+      cellContent
+    ]);
+  });
 
-        if (link) {
-            const linkElement = document.createElement('a');
-            linkElement.href = link.href;
-            linkElement.textContent = link.textContent.trim();
-            textContent.push(linkElement);
-        }
-
-        return [image, textContent];
-    });
-
-    const tableData = [headerRow, ...rows];
-    const block = WebImporter.DOMUtils.createTable(tableData, document);
-
-    element.replaceWith(block);
+  const table = WebImporter.DOMUtils.createTable(rows, document);
+  element.replaceWith(table);
 }

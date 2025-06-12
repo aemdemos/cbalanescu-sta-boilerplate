@@ -1,27 +1,20 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  // Define the header row exactly matching the example
+  // 1. The header row must be a single column, matching the example exactly
   const headerRow = ['Columns (columns11)'];
 
-  // Extract relevant child elements dynamically
-  const items = Array.from(element.querySelectorAll('.teaser-icon-item'));
+  // 2. Get all the columns: .teaser-icon-item elements inside .icon-block__items
+  const itemsContainer = element.querySelector('.icon-block__items');
+  let columns = [];
+  if (itemsContainer) {
+    columns = Array.from(itemsContainer.querySelectorAll(':scope > .teaser-icon-item'));
+  }
 
-  // Parse each item combining the image and associated text into a single cell
-  const rows = items.map((item) => {
-    const img = item.querySelector('img');
-    const title = item.querySelector('h4');
-
-    // Create a single cell combining image and text
-    const cellContent = document.createElement('div');
-    if (img) cellContent.appendChild(img);
-    if (title) cellContent.appendChild(title);
-
-    return [cellContent];
-  });
-
-  // Create the block table using the WebImporter helper function
-  const table = WebImporter.DOMUtils.createTable([headerRow, ...rows], document);
-
-  // Replace the original element with the newly created block table
-  element.replaceWith(table);
+  // 3. Only create a table if there is at least one column
+  if (columns.length > 0) {
+    // Build the rows array for createTable: [[header], [col1, col2, ...]]
+    const rows = [headerRow, columns];
+    const table = WebImporter.DOMUtils.createTable(rows, document);
+    element.replaceWith(table);
+  }
 }

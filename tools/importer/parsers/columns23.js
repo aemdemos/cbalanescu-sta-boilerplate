@@ -1,36 +1,41 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  const headerRow = ['Columns (columns23)'];
-
-  // Extracting content dynamically from the given element
+  // Get the main container
   const container = element.querySelector(':scope > .container');
-  const contentWrapper = container?.querySelector(':scope > .hero-banner-image-descr__content');
-  const imageWrapper = container?.querySelector(':scope > .hero-banner-image-descr__image-wrapper');
+  if (!container) return;
 
-  const title = contentWrapper?.querySelector(':scope > .hero-banner-image-descr__title');
-  const text = contentWrapper?.querySelector(':scope > .hero-banner-image-descr__text');
-  const downloadLink = contentWrapper?.querySelector(':scope > .cta-download-link');
-  const image = imageWrapper?.querySelector(':scope > img');
+  // Get left column: content area
+  const leftCol = container.querySelector(':scope > .hero-banner-image-descr__content');
+  // Get right column: image area
+  const rightCol = container.querySelector(':scope > .hero-banner-image-descr__image-wrapper');
 
-  // Handle edge cases for missing elements or content
-  const titleElement = title ? title : document.createTextNode('');
-  const textElement = text ? text : document.createTextNode('');
-  const downloadLinkElement = downloadLink ? downloadLink : document.createTextNode('');
-  const imageElement = image ? image : document.createElement('div'); // Placeholder div if image is missing
+  // Prepare left column content array
+  const leftColParts = [];
+  if (leftCol) {
+    // Title (h3)
+    const title = leftCol.querySelector('.hero-banner-image-descr__title');
+    if (title) leftColParts.push(title);
+    // Description (text block)
+    const descr = leftCol.querySelector('.hero-banner-image-descr__text');
+    if (descr) leftColParts.push(descr);
+    // Download link (button)
+    const btn = leftCol.querySelector('a.button, a.cta-download-link');
+    if (btn) leftColParts.push(btn);
+  }
 
-  // Creating the table rows
-  const row1 = [
-    [titleElement, textElement, downloadLinkElement], // Combine title, text, and download link in the first cell
-    imageElement // Second cell contains the image or a placeholder
+  // Prepare right column content
+  let rightColContent = null;
+  if (rightCol) {
+    const img = rightCol.querySelector('img');
+    if (img) rightColContent = img;
+  }
+
+  // Header row must match example exactly
+  const cells = [
+    ['Columns block'],
+    [leftColParts, rightColContent || '']
   ];
 
-  const cells = [headerRow, row1];
-
-  // Creating the block table
   const block = WebImporter.DOMUtils.createTable(cells, document);
-
-  // Replace the original element with the new block table
   element.replaceWith(block);
-
-  return block;
 }
