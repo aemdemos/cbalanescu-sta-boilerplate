@@ -1,53 +1,35 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  // Header row for the table matching the provided example
   const headerRow = ['Cards (cards15)'];
-
-  // Extracting child elements under the main container
-  const items = element.querySelectorAll(':scope > div.text-image-item');
-
   const rows = [headerRow];
-
-  items.forEach((item) => {
-    // Safely extract image element
-    const img = item.querySelector('img');
-    let imageElement;
-    if (img) {
-      imageElement = document.createElement('img');
-      imageElement.src = img.src;
-      imageElement.alt = img.alt;
-    } else {
-      imageElement = document.createElement('div');
-      imageElement.textContent = 'No image available';
-    }
-
-    // Safely extract text content
-    const content = item.querySelector('.text-image-item__content');
-    const textContent = document.createElement('div');
-
+  // Get all immediate card items (div.text-image-item under the block container)
+  const cards = element.querySelectorAll(':scope > div.text-image-item');
+  cards.forEach((card) => {
+    // Image
+    const img = card.querySelector('img');
+    // Content
+    const content = card.querySelector('.text-image-item__content');
+    let textCellContent = [];
     if (content) {
+      // Title
       const title = content.querySelector('.text-image-item__title');
       if (title) {
-        const titleElement = document.createElement('h3');
-        titleElement.textContent = title.textContent;
-        textContent.appendChild(titleElement);
+        // Using strong to match the visual example (bolded title)
+        const strong = document.createElement('strong');
+        strong.innerHTML = title.innerHTML;
+        textCellContent.push(strong);
+        textCellContent.push(document.createElement('br'));
       }
-
-      const description = content.querySelector('.text-image-item__description');
-      if (description) {
-        // Directly append the description's innerHTML without additional wrapping
-        textContent.innerHTML += description.innerHTML;
+      // Description
+      const desc = content.querySelector('.text-image-item__description');
+      if (desc) {
+        Array.from(desc.childNodes).forEach((node) => {
+          textCellContent.push(node);
+        });
       }
-    } else {
-      textContent.textContent = 'No content available';
     }
-
-    rows.push([imageElement, textContent]);
+    rows.push([img, textCellContent]);
   });
-
-  // Creating the table block
-  const block = WebImporter.DOMUtils.createTable(rows, document);
-
-  // Replacing the original element with the new block table
-  element.replaceWith(block);
+  const table = WebImporter.DOMUtils.createTable(rows, document);
+  element.replaceWith(table);
 }

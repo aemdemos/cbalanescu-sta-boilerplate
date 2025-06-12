@@ -1,28 +1,22 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-    const headerRow = ['Columns (columns19)'];
+  // Get all column wrappers
+  const cols = Array.from(element.querySelectorAll(':scope > .two-column-icon-item__col'));
 
-    // Extract immediate child columns
-    const columns = Array.from(element.querySelectorAll(':scope > div'));
+  // For each col, extract its .icon-item content (reference the element directly for robust parsing)
+  const cells = cols.map(col => {
+    // Use the .icon-item directly if available, fall back to col
+    const iconItem = col.querySelector('.icon-item');
+    return iconItem || col;
+  });
 
-    // Map columns to their content (image and content inside the paragraph)
-    const contentRows = columns.map((col) => {
-        const img = col.querySelector('img');
-        const content = col.querySelector('.icon-item__content');
+  // Compose table: header, then one row of columns
+  const tableArray = [
+    ['Columns (columns19)'],
+    cells
+  ];
 
-        // Handle missing elements gracefully
-        const extractedImg = img ? img : document.createTextNode('');
-        const extractedContent = content ? content : document.createTextNode('');
-
-        // Return array with img and content
-        return [extractedImg, extractedContent];
-    });
-
-    const tableData = [headerRow, ...contentRows];
-
-    // Create the block table
-    const block = WebImporter.DOMUtils.createTable(tableData, document);
-
-    // Replace original element with the block table
-    element.replaceWith(block);
+  // Create and replace with table
+  const table = WebImporter.DOMUtils.createTable(tableArray, document);
+  element.replaceWith(table);
 }

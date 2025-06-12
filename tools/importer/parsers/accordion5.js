@@ -1,38 +1,43 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  // Extract the navigation items
-  const navItems = [...element.querySelectorAll(':scope > div > ul > li')];
+  // Find the menu wrapper ul (main menu)
+  const menuWrapper = element.querySelector('ul[data-component="menu-wrapper"]');
+  if (!menuWrapper) return;
 
-  // Prepare the header row with the corrected text
+  // Get all top-level menu items (li.header-main-nav-item)
+  const topLevelItems = Array.from(menuWrapper.children).filter(
+    (li) => li.classList.contains('header-main-nav-item')
+  );
+
+  // Prepare header row exactly as required
   const headerRow = ['Accordion (accordion5)'];
+  const rows = [headerRow];
 
-  // Map the navigation items into table rows
-  const rows = navItems.map((item) => {
-    const titleElement = item.querySelector(':scope > a');
-
-    // Ensure the title element is extracted dynamically
-    if (!titleElement) return null;
-    const titleCell = titleElement.cloneNode(true); // Clone the title element
-
-    const dropdownMenu = item.querySelector(':scope > ul');
-
-    let contentCell;
-    if (dropdownMenu) {
-      const subItems = [...dropdownMenu.querySelectorAll(':scope > li > a')];
-      contentCell = subItems.length > 0 ? subItems.map((subItem) => subItem.cloneNode(true)) : null; // Handle empty dropdown
-    } else {
-      contentCell = null; // No dropdown means no content
+  // Iterate over top level menu items (accordions)
+  topLevelItems.forEach((li) => {
+    // Title for accordion: combine subtitle and title as plain text, not a link
+    const link = li.querySelector(':scope > a');
+    let titleCell = '';
+    if (link) {
+      const subtitle = link.querySelector('.menu-subtitle');
+      const title = link.querySelector('.menu-item-title');
+      // Compose the text content (subtitle + space + title), trimming whitespace
+      const subtitleText = subtitle && subtitle.textContent.trim() ? subtitle.textContent.trim() + ' ' : '';
+      const titleText = title && title.textContent.trim() ? title.textContent.trim() : '';
+      titleCell = subtitleText + titleText;
     }
 
-    return contentCell ? [titleCell, contentCell] : [titleCell]; // Only include contentCell if it exists
-  }).filter(Boolean); // Filter out null rows
+    // Content cell: the submenu as a whole, if present
+    const dropdown = li.querySelector(':scope > ul.dropdown-menu');
+    let contentCell = '';
+    if (dropdown) {
+      contentCell = dropdown;
+    }
 
-  // Combine the header row and content rows
-  const tableData = [headerRow, ...rows];
+    rows.push([titleCell, contentCell]);
+  });
 
-  // Create the block table
-  const blockTable = WebImporter.DOMUtils.createTable(tableData, document);
-
-  // Replace the original element with the new block table
-  element.replaceWith(blockTable);
+  // Create the block table and replace original element
+  const table = WebImporter.DOMUtils.createTable(rows, document);
+  element.replaceWith(table);
 }

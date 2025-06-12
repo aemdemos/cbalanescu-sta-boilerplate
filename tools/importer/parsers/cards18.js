@@ -1,39 +1,50 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-    const headerRow = ['Cards (cards18)'];
+  const headerRow = ['Cards (cards18)'];
+  const rows = [headerRow];
 
-    const cards = Array.from(element.querySelectorAll(':scope > div.teaser-icon-item')).map((item) => {
-        const image = item.querySelector('.teaser-icon-item__icon');
-        const title = item.querySelector('.teaser-icon-item__title');
-        const description = item.querySelector('.teaser-icon-item__desc');
-        const ctaButton = item.querySelector('.teaser-icon-item__cta > button');
+  // Each card is a '.teaser-icon-item'
+  const cardEls = element.querySelectorAll(':scope > .teaser-icon-item');
+  cardEls.forEach(card => {
+    // Image/Icon (first cell)
+    const img = card.querySelector('img.teaser-icon-item__icon');
+    // Use the actual image element from the document (do not clone)
+    let imgCell = img;
 
-        const ctaLink = ctaButton ? document.createElement('a') : null;
-        if (ctaButton) {
-            ctaLink.href = '#';
-            ctaLink.textContent = ctaButton.textContent.trim();
-        }
+    // Text content (second cell)
+    const cellContent = [];
+    // Title (strong)
+    const title = card.querySelector('.teaser-icon-item__title');
+    if (title) {
+      const strong = document.createElement('strong');
+      strong.textContent = title.textContent.trim();
+      cellContent.push(strong);
+      cellContent.push(document.createElement('br'));
+    }
+    // Description
+    const desc = card.querySelector('.teaser-icon-item__desc');
+    if (desc) {
+      // Preserve all children (could be <p> or text nodes)
+      Array.from(desc.childNodes).forEach(node => {
+        cellContent.push(node);
+      });
+    }
+    // CTA button (as a span, since it opens a popup, not a URL)
+    const ctaBtn = card.querySelector('.teaser-icon-item__cta .button');
+    if (ctaBtn) {
+      cellContent.push(document.createElement('br'));
+      const span = document.createElement('span');
+      span.textContent = ctaBtn.textContent.trim();
+      span.className = 'cta';
+      cellContent.push(span);
+    }
+    
+    rows.push([
+      imgCell,
+      cellContent
+    ]);
+  });
 
-        const textContent = [];
-
-        if (title) {
-            const titleHeading = document.createElement('h4');
-            titleHeading.textContent = title.textContent.trim();
-            textContent.push(titleHeading);
-        }
-
-        if (description) {
-            textContent.push(description);
-        }
-
-        if (ctaLink) {
-            textContent.push(ctaLink);
-        }
-
-        return [image, textContent];
-    });
-
-    const tableData = [headerRow, ...cards];
-    const block = WebImporter.DOMUtils.createTable(tableData, document);
-    element.replaceWith(block);
+  const table = WebImporter.DOMUtils.createTable(rows, document);
+  element.replaceWith(table);
 }

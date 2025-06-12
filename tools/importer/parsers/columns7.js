@@ -1,67 +1,35 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
+  // Find the block containing the columns
+  const block = element.querySelector('.tree-column-teaser-block');
+  if (!block) return;
+
+  // Get column items
+  const columns = block.querySelectorAll(':scope > .simple-teaser-item');
+  if (columns.length < 2) return;
+
+  // For each column, collect all its children as an array
+  const getChildrenArray = (col) => {
+    // Only take element nodes and non-empty text nodes
+    return Array.from(col.childNodes).filter(
+      node => node.nodeType === 1 || (node.nodeType === 3 && node.textContent.trim().length)
+    );
+  };
+
+  const firstColChildren = getChildrenArray(columns[0]);
+  const secondColChildren = getChildrenArray(columns[1]);
+
+  // Compose columns as arrays (or plain element if only one child)
+  const col1 = firstColChildren.length === 1 ? firstColChildren[0] : firstColChildren;
+  const col2 = secondColChildren.length === 1 ? secondColChildren[0] : secondColChildren;
+
+  // Table structure: header row must be a single cell, content row as columns
   const headerRow = ['Columns (columns7)'];
-
-  // Validate header row matches example exactly and contains exactly one column
-  if (headerRow.length !== 1 || headerRow[0] !== 'Columns (columns7)') {
-    console.error('Header row does not match the expected format or has more than one column.');
-    return;
-  }
-
-  // Get all immediate child div elements
-  const children = Array.from(element.querySelectorAll(':scope > div'));
-
-  // Check for missing or empty child elements
-  if (children.length < 2) {
-    console.error('Insufficient child elements found in the block.');
-    return;
-  }
-
-  // First column: Extract text content dynamically
-  const textContent = children[0];
-
-  // Check if textContent is valid
-  if (!textContent || !textContent.textContent.trim()) {
-    console.error('Text content is missing or empty in the first column.');
-    return;
-  }
-
-  // Second column: Extract image and link dynamically
-  const mediaContent = children[1];
-
-  const image = mediaContent.querySelector('img');
-
-  // Check if the image is missing
-  if (!image) {
-    console.error('Image element missing in the second column.');
-    return;
-  }
-
-  // Handle elements with a 'src' attribute, excluding images
-  const nonImageSrcElements = Array.from(mediaContent.querySelectorAll('[src]:not(img)'));
-  const convertedLinks = nonImageSrcElements.map(el => {
-    const link = document.createElement('a');
-    link.href = el.getAttribute('src');
-    link.textContent = 'Link';
-    return link;
-  });
-
-  const link = mediaContent.querySelector('a');
-
-  // Check if the link is missing or invalid
-  if (!link || !link.hasAttribute('href')) {
-    console.error('Link element missing or invalid in the second column.');
-    return;
-  }
-
   const cells = [
     headerRow,
-    [textContent, [image, link, ...convertedLinks]],
+    [col1, col2]
   ];
 
-  // Create block table
-  const blockTable = WebImporter.DOMUtils.createTable(cells, document);
-
-  // Replace original element with new structure
-  element.replaceWith(blockTable);
+  const table = WebImporter.DOMUtils.createTable(cells, document);
+  element.replaceWith(table);
 }

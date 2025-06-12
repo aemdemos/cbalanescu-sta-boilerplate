@@ -1,51 +1,52 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  const cells = [];
+  // Table header as specified
   const headerRow = ['Cards (cards1)'];
-  cells.push(headerRow);
 
-  const teaserItems = element.querySelectorAll(':scope > div > div.teaser-block__items > div.teaser-item');
+  // Find all card containers
+  const itemsContainer = element.querySelector('.teaser-block__items');
+  if (!itemsContainer) return;
+  const itemNodes = Array.from(itemsContainer.children).filter(e => e.classList.contains('teaser-item'));
 
-  teaserItems.forEach((teaserItem) => {
-    const img = teaserItem.querySelector('img');
-    const title = teaserItem.querySelector('.teaser-item__title');
-    const subtitle = teaserItem.querySelector('.teaser-item__subtitle');
-    const desc = teaserItem.querySelector('.teaser-item__desc');
-    const cta = teaserItem.querySelector('a');
-
-    const imageCell = img;
-
-    const textContent = [];
-
-    if (subtitle) {
-      const subtitleElement = document.createElement('p');
-      subtitleElement.innerHTML = subtitle.innerHTML;
-      textContent.push(subtitleElement);
+  // Build table rows for each card
+  const rows = itemNodes.map(card => {
+    // First cell: image
+    const img = card.querySelector('img') || '';
+    // Second cell: content
+    const content = card.querySelector('.teaser-item__content');
+    const contentElems = [];
+    if (content) {
+      const titleWrapper = content.querySelector('.teaser-item__title-wrapper');
+      if (titleWrapper) {
+        const subtitle = titleWrapper.querySelector('.teaser-item__subtitle');
+        const title = titleWrapper.querySelector('.teaser-item__title');
+        if (subtitle && title) {
+          // Place subtitle and title wrapped in a div to preserve structure
+          const wrapper = document.createElement('div');
+          wrapper.appendChild(subtitle);
+          wrapper.appendChild(title);
+          contentElems.push(wrapper);
+        } else if (title) {
+          contentElems.push(title);
+        }
+      }
+      // Description
+      const desc = content.querySelector('.teaser-item__desc');
+      if (desc) {
+        contentElems.push(desc);
+      }
+      // CTA
+      const cta = content.querySelector('a.button');
+      if (cta) {
+        contentElems.push(cta);
+      }
     }
-
-    if (title) {
-      const titleElement = document.createElement('strong');
-      titleElement.innerHTML = title.innerHTML;
-      textContent.push(titleElement);
-    }
-
-    if (desc) {
-      textContent.push(desc);
-    }
-
-    if (cta) {
-      const ctaElement = document.createElement('p');
-      const link = document.createElement('a');
-      link.href = cta.href;
-      link.innerHTML = cta.innerHTML;
-      ctaElement.appendChild(link);
-      textContent.push(ctaElement);
-    }
-
-    cells.push([imageCell, textContent]);
+    return [img, contentElems];
   });
 
-  const table = WebImporter.DOMUtils.createTable(cells, document);
-
+  const table = WebImporter.DOMUtils.createTable([
+    headerRow,
+    ...rows
+  ], document);
   element.replaceWith(table);
 }

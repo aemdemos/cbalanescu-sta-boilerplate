@@ -1,38 +1,43 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  const headerRow = ['Cards (cards20)']; // Matches example block name structure
-  const rows = [];
+  // Cards header as per requirements
+  const headerRow = ['Cards (cards20)'];
 
-  // Select all card items within the section
-  const cards = element.querySelectorAll('.icon-item');
+  // Find the block containing card items
+  const iconsBlock = element.querySelector('.icons-block-item');
+  if (!iconsBlock) return;
+  const cardItems = iconsBlock.querySelectorAll('.icon-item');
 
-  cards.forEach((card) => {
+  const rows = [headerRow];
+
+  cardItems.forEach((card) => {
+    // The image/icon on the left
     const img = card.querySelector('img');
-    const imgElement = document.createElement('img');
-    imgElement.src = img.src;
-    imgElement.alt = img.alt;
-
-    const title = card.querySelector('.icon-item__title');
+    // The text cell on the right
+    const title = card.querySelector('h5');
     const content = card.querySelector('.icon-item__content');
 
-    const textCellContent = [];
+    // For the text cell, we create a fragment to preserve all semantics
+    const fragment = document.createDocumentFragment();
     if (title) {
-      const titleElement = document.createElement('strong');
-      titleElement.textContent = title.textContent.trim();
-      textCellContent.push(titleElement);
+      // Use <strong> as in the example, and add line break after
+      const strong = document.createElement('strong');
+      strong.textContent = title.textContent;
+      fragment.appendChild(strong);
+      fragment.appendChild(document.createElement('br'));
     }
     if (content) {
-      content.querySelectorAll('p').forEach((paragraph) => {
-        textCellContent.push(paragraph.cloneNode(true));
+      Array.from(content.childNodes).forEach((node) => {
+        // Directly append the existing node (do not clone)
+        fragment.appendChild(node);
       });
     }
 
-    rows.push([imgElement, textCellContent]);
+    // Add row: [image, text cell fragment]
+    rows.push([img, fragment]);
   });
 
-  // Create the table using the helper function
-  const table = WebImporter.DOMUtils.createTable([headerRow, ...rows], document);
-
-  // Replace the original element with the table
+  // Create table and replace
+  const table = WebImporter.DOMUtils.createTable(rows, document);
   element.replaceWith(table);
 }

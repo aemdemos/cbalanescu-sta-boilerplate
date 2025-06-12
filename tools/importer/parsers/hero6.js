@@ -1,21 +1,29 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  const headerRow = ['Hero (hero6)'];
+  // Find the hero section within the imported block
+  const heroSection = element.querySelector('section.hero-banner-image');
+  if (!heroSection) return;
 
-  // Extract relevant elements
-  const image = element.querySelector('.hero-banner-image__img');
-  const title = element.querySelector('.hero-banner-image__title');
-  const description = element.querySelector('.hero-banner-image__desc');
+  // Find the headline (should be a heading)
+  const title = heroSection.querySelector('.hero-banner-image__title');
 
-  // Combine content into a single cell to match the example structure
-  const contentRow = [
-    [image, title, description] // Combine all content into one cell
-  ];
+  // Find the description (optional)
+  const desc = heroSection.querySelector('.hero-banner-image__desc');
 
-  // Create the block table
-  const cells = [headerRow, contentRow];
-  const block = WebImporter.DOMUtils.createTable(cells, document);
+  // Find the visual image (background image and <img>, but use the <img> for accessibility)
+  const img = heroSection.querySelector('img.hero-banner-image__img');
 
-  // Replace the original element with the new block table
-  element.replaceWith(block);
+  // Compose the content cell: order is [img, title, desc]
+  const content = [];
+  if (img) content.push(img);
+  if (title) content.push(title);
+  if (desc) content.push(desc);
+
+  // Compose the hero block table
+  const table = WebImporter.DOMUtils.createTable([
+    ['Hero (hero6)'],
+    [content]
+  ], document);
+
+  element.replaceWith(table);
 }

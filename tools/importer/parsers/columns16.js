@@ -1,25 +1,31 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  // Define the header row based on the block name
+  // Table header row that matches the component/block name exactly
   const headerRow = ['Columns (columns16)'];
 
-  // Extract the content and text elements
-  const contentDiv = element.querySelector('.hero-banner-image-descr__content');
-  const textDiv = contentDiv.querySelector('.hero-banner-image-descr__text');
+  // Get the left/content column: .hero-banner-image-descr__content
+  const contentCol = element.querySelector('.hero-banner-image-descr__content');
+  // Defensive: if not found, use blank placeholder
+  const leftCell = contentCol || '';
 
-  // Extract image elements dynamically
-  const imageWrappers = element.querySelectorAll('.hero-banner-image-descr__image-wrapper');
-  const images = Array.from(imageWrappers).map(wrapper => wrapper.querySelector('img'));
+  // Get the right/image column: desktop image only (not mobile)
+  let rightCell = '';
+  const imageWrapper = element.querySelector('.hero-banner-image-descr__image-wrapper.desktop-image');
+  if (imageWrapper) {
+    const img = imageWrapper.querySelector('img');
+    if (img) rightCell = img;
+  }
 
-  // Construct the cells array for the table
+  // Second row as columns
+  const columnsRow = [leftCell, rightCell];
+
+  // Compose cells
   const cells = [
     headerRow,
-    [textDiv, images]
+    columnsRow,
   ];
 
-  // Create the block table using WebImporter.DOMUtils.createTable
-  const blockTable = WebImporter.DOMUtils.createTable(cells, document);
-
-  // Replace the original element with the new block table
-  element.replaceWith(blockTable);
+  // Create and replace
+  const table = WebImporter.DOMUtils.createTable(cells, document);
+  element.replaceWith(table);
 }

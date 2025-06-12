@@ -1,26 +1,30 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  // Defining the header row for the block table
-  const headerRow = ['Columns (columns13)'];
+  // Find the main wrapper containing the columns
+  const wrapper = element.querySelector('.hero-banner-image-descr.wrapper');
+  if (!wrapper) return;
 
-  // Extracting relevant content from the provided element
-  const contentWrapper = element.querySelector(':scope > div.hero-banner-image-descr');
+  // Left column: text content (reference the direct child of .hero-banner-image-descr__content)
+  let leftCell = '';
+  const content = wrapper.querySelector('.hero-banner-image-descr__content');
+  if (content) {
+    // Prefer .hero-banner-image-descr__text if present
+    const text = content.querySelector('.hero-banner-image-descr__text');
+    leftCell = text || content;
+  }
 
-  // Extracting text content
-  const textElement = contentWrapper.querySelector(':scope > div.hero-banner-image-descr__content .hero-banner-image-descr__text');
-  const textCell = textElement ? textElement : '';
+  // Right column: image (reference the img element directly)
+  let rightCell = '';
+  const imageWrapper = wrapper.querySelector('.hero-banner-image-descr__image-wrapper');
+  if (imageWrapper) {
+    const img = imageWrapper.querySelector('img');
+    if (img) rightCell = img;
+  }
 
-  // Extracting image
-  const imageWrapper = contentWrapper.querySelector(':scope > div.hero-banner-image-descr__image-wrapper img');
-  const imageCell = imageWrapper ? imageWrapper : '';
-
-  // Creating cells for the table
   const cells = [
-    headerRow,
-    [textCell, imageCell],
+    ['Columns (columns13)'],
+    [leftCell, rightCell]
   ];
-
-  // Creating the block table and replacing the original element
-  const block = WebImporter.DOMUtils.createTable(cells, document);
-  element.replaceWith(block);
+  const table = WebImporter.DOMUtils.createTable(cells, document);
+  element.replaceWith(table);
 }

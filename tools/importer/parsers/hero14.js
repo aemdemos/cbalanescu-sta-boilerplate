@@ -1,36 +1,37 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
+  // Table header as in the example
   const headerRow = ['Hero (hero14)'];
 
-  // Extract relevant content dynamically
-  const title = element.querySelector(':scope > h4.text-with-bg__title');
+  // Gather content in correct order
+  const content = [];
 
-  const logo = element.querySelector(':scope > div.text-with-bg > img.text-with-bg__logo');
+  // Title (mandatory)
+  const title = element.querySelector('.text-with-bg__title');
+  if (title) content.push(title);
 
-  const description = element.querySelector(':scope > div.text-with-bg > div.text-with-bg__content > div.text-with-bg__desc');
+  // Logo (optional, placed after title in screenshot)
+  const logo = element.querySelector('.text-with-bg__logo');
+  if (logo) content.push(logo);
 
-  const cta = element.querySelector(':scope > div.text-with-bg > div.text-with-bg__content > a.button');
+  // Description (optional)
+  const desc = element.querySelector('.text-with-bg__desc');
+  if (desc) content.push(desc);
 
-  // Handle edge cases for missing elements
-  const titleContent = title ? title : document.createTextNode('');
-  const logoContent = logo ? logo : document.createTextNode('');
-  const descriptionContent = description ? description : document.createTextNode('');
-  const ctaContent = cta ? cta : document.createTextNode('');
+  // CTA (optional)
+  const cta = element.querySelector('.button');
+  if (cta) content.push(cta);
 
-  // Combine all elements into a single column for content row
-  const combinedContent = document.createElement('div');
-  combinedContent.append(titleContent, logoContent, descriptionContent, ctaContent);
+  // Only add non-empty content
+  const cellContent = content.length ? content : [''];
 
-  const contentRow = [
-    [combinedContent]
+  // Table structure: 1 column, 2 rows
+  const cells = [
+    headerRow,
+    [cellContent],
   ];
-
-  // Combine rows into table array
-  const cells = [headerRow, ...contentRow];
 
   // Create table block
   const block = WebImporter.DOMUtils.createTable(cells, document);
-
-  // Replace original element with new block table
   element.replaceWith(block);
 }
