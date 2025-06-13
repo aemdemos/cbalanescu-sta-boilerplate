@@ -2,6 +2,7 @@
 
 
 
+
 /* --- COLUMN LAYOUT BASE --- */
 .columns > div {
   display: flex;
@@ -488,164 +489,133 @@
 
 /* GENERATED CSS: */
 
-/* MERGED SELECTOR START */
-.columns.columns19 {
-  margin: 54px auto;
-  max-width: 1100px;
-  box-sizing: border-box;
-  padding: 0 12px;
+.columns.columns22 {
+  position: relative;
+
+  /* Reduce padding to ensure content is visible and centered */
+  padding: 70px 0 50px;
+  background: transparent;
+  z-index: 0;
+  min-height: unset;
+  overflow: visible;
 }
 
-/* MERGED SELECTOR END */
+/* Visible, subtle background wave anchored lower so content shows above */
+.columns.columns22::before {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 55%;
+  background: linear-gradient(180deg, transparent 0%, #ededed 99%);
+  border-top-left-radius: 70% 70px;
+  border-top-right-radius: 70% 70px;
+  z-index: 0;
+  pointer-events: none;
+  display: block;
+}
 
-.columns.columns19 > div {
+/* Horizontal flex row for column group */
+.columns.columns22 > div {
   display: flex;
   flex-direction: row;
   justify-content: center;
-  align-items: stretch;
-  gap: 88px;
+  align-items: flex-start;
+  gap: 28px;
+  max-width: 950px;
+  margin: 0 auto;
   position: relative;
   z-index: 1;
-  min-height: 245px;
 }
 
-.columns.columns19 > div::before {
-  display: block;
-  position: absolute;
-  left: 50%;
-  top: 32px;
-  height: calc(100% - 64px);
-  width: 54px;
-  background: #d7e7a8;
-  border-radius: 28px;
-  z-index: 0;
-  pointer-events: none;
-}
-
-@media (width <= 900px) {
-  .columns.columns19 > div {
-    flex-direction: column;
-    gap: 32px;
-    min-height: 0;
-    padding: 0 8px;
-  }
-
-  .columns.columns19 > div::before {
-    display: none;
-  }
-}
-
-.columns.columns19 > div > div {
-  background: #fff;
-  border-radius: 22px;
-  padding: 28px 28px 28px 32px;
+/* Each column: only as wide as needed for icon/text block */
+.columns.columns22 > div > div {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  min-width: 0;
+  max-width: 300px;
+  padding: 0 8px;
   box-sizing: border-box;
-  min-width: 355px;
-  width: 388px;
-  max-width: 100%;
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  position: relative;
-  z-index: 1;
-  box-shadow: none;
-}
-
-@media (width <= 900px) {
-  .columns.columns19 > div > div {
-    width: 100%;
-    min-width: 0;
-    padding: 18px 6px 18px 12px;
-    border-radius: 15px;
-  }
-}
-
-.columns.columns19 > div > div > p:first-child {
   margin: 0;
-  margin-right: 32px;
-  flex-shrink: 0;
-  display: flex;
-  align-items: flex-start;
-  height: 70px;
 }
 
-.columns.columns19 > div > div > p:first-child picture,
-.columns.columns19 > div > div > p:first-child img {
-  display: block;
+/* Icon/image alignment and spacing */
+.columns.columns22 > div > div > p:first-child {
+  margin: 0 0 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.columns.columns22 > div > div picture {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   margin: 0;
   padding: 0;
-  width: 69px;
-  height: 69px;
-  max-width: unset;
-  max-height: unset;
 }
 
-.columns.columns19 > div > div > p:first-child img {
-  width: 69px;
-  height: 69px;
-  border-radius: 50%;
-  background: #fff;
-  box-shadow:
-    0 0 0 4px #bada23,
-    0 0 0 8px #3ab6e5,
-    0 0 0 12px #d1242a;
+.columns.columns22 > div > div img {
+  width: 96px;
+  height: 96px;
   object-fit: contain;
-  background-color: #fff;
   display: block;
-  max-width: 69px;
-  max-height: 69px;
-  min-width: 69px;
-  min-height: 69px;
-  border: none;
-  filter: none;
-  opacity: 1;
+  margin: 0 auto;
 }
 
-.columns.columns19 > div > div > p:nth-child(2) {
+/* Text block: allow wider max-width for fewer line breaks */
+.columns.columns22 > div > div > p:not(:first-child) {
   margin: 0;
-  color: #222;
+  color: #232323;
+  font-family: 'Noto Sans', 'Noto Sans Fallback', sans-serif;
   font-size: 18px;
-  line-height: 1.5;
-  font-family: var(--body-font-family, "Noto Sans", sans-serif);
-  text-align: left;
-  flex: 1 1 0;
-  display: block;
-  min-width: 0;
-  word-break: break-word;
+  line-height: 1.22;
+  text-align: center;
+  max-width: 340px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 6px;
 }
 
-.columns.columns19 > div > div > p:nth-child(2) strong {
-  font-size: 20px;
-  font-weight: 700;
-  color: #222;
-  line-height: 1.35;
-  display: inline;
-}
+/* Responsive stacking and spacing */
+@media (width <= 950px) {
+  .columns.columns22 {
+    padding: 38px 0 24px;
+  }
 
-.columns.columns19 sup {
-  font-size: 11px;
-  vertical-align: super;
-  line-height: 1;
-  color: #222;
-  position: relative;
-  top: -0.2em;
-}
-
-.columns.columns19 > div > div > p {
-  margin-top: 0;
-  margin-bottom: 0;
-}
-
-@media (width <= 600px) {
-  .columns.columns19 > div > div {
+  .columns.columns22 > div {
     flex-direction: column;
-    align-items: flex-start;
-    padding: 12px 2px;
+    gap: 34px;
+    max-width: 100%;
+    padding: 0 10px;
   }
 
-  .columns.columns19 > div > div > p:first-child {
-    margin-bottom: 8px;
-    margin-right: 0;
-    height: auto;
+  .columns.columns22 > div > div {
+    max-width: 100%;
+    padding: 0;
+    margin: 0 auto;
   }
+
+  .columns.columns22 > div > div img {
+    width: 72px;
+    height: 72px;
+  }
+
+  .columns.columns22 > div > div > p:not(:first-child) {
+    max-width: 98vw;
+    font-size: 17px;
+  }
+}
+
+/* MERGED RESULT FOR .columns.columns22 */
+.columns.columns22 {
+  position: relative;
+  padding: 70px 0 50px;
+  background: transparent;
+  z-index: 0;
+  min-height: unset;
+  overflow: visible;
 }
