@@ -3,45 +3,41 @@ export default function parse(element, { document }) {
   const headerRow = ['Cards (cards18)'];
   const rows = [headerRow];
 
-  // Each card is a '.teaser-icon-item'
-  const cardEls = element.querySelectorAll(':scope > .teaser-icon-item');
-  cardEls.forEach(card => {
-    // Image/Icon (first cell)
-    const img = card.querySelector('img.teaser-icon-item__icon');
-    // Use the actual image element from the document (do not clone)
-    let imgCell = img;
+  // Find each card container
+  const cards = element.querySelectorAll(':scope > .teaser-icon-item');
+  cards.forEach(card => {
+    // First cell: the icon image element
+    const img = card.querySelector('.teaser-icon-item__icon');
 
-    // Text content (second cell)
-    const cellContent = [];
-    // Title (strong)
+    // Second cell: content (title, description, CTA)
+    const content = [];
+    // Title as <h4> or whatever is in the source (reference the node itself)
     const title = card.querySelector('.teaser-icon-item__title');
     if (title) {
-      const strong = document.createElement('strong');
-      strong.textContent = title.textContent.trim();
-      cellContent.push(strong);
-      cellContent.push(document.createElement('br'));
+      content.push(title);
     }
-    // Description
+    // Description (reference the div or its children)
     const desc = card.querySelector('.teaser-icon-item__desc');
     if (desc) {
-      // Preserve all children (could be <p> or text nodes)
       Array.from(desc.childNodes).forEach(node => {
-        cellContent.push(node);
+        if ((node.nodeType === 1 || node.nodeType === 3) && (node.textContent && node.textContent.trim() !== '')) {
+          content.push(node);
+        }
       });
     }
-    // CTA button (as a span, since it opens a popup, not a URL)
+    // CTA Button (reference the main button, use its text)
     const ctaBtn = card.querySelector('.teaser-icon-item__cta .button');
     if (ctaBtn) {
-      cellContent.push(document.createElement('br'));
-      const span = document.createElement('span');
-      span.textContent = ctaBtn.textContent.trim();
-      span.className = 'cta';
-      cellContent.push(span);
+      // Only add if there is a visible label
+      if (ctaBtn.textContent && ctaBtn.textContent.trim().length > 0) {
+        // Add a <br> before for separation if there is already content
+        if (content.length > 0) content.push(document.createElement('br'));
+        content.push(ctaBtn);
+      }
     }
-    
     rows.push([
-      imgCell,
-      cellContent
+      img,
+      content
     ]);
   });
 

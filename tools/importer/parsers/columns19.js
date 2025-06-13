@@ -1,22 +1,29 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  // Get all column wrappers
-  const cols = Array.from(element.querySelectorAll(':scope > .two-column-icon-item__col'));
+  // Get all direct column divs (should be two for this layout)
+  const columns = Array.from(element.querySelectorAll(':scope > div'));
 
-  // For each col, extract its .icon-item content (reference the element directly for robust parsing)
-  const cells = cols.map(col => {
-    // Use the .icon-item directly if available, fall back to col
-    const iconItem = col.querySelector('.icon-item');
-    return iconItem || col;
+  // For each column, get all children (should be one icon-item, but robust for future changes)
+  const contentRow = columns.map((col) => {
+    // If the column only has one element, use it directly, else group all its content
+    const children = Array.from(col.childNodes).filter((n) => 
+      n.nodeType === 1 || (n.nodeType === 3 && n.textContent.trim())
+    );
+    if (children.length === 1) {
+      return children[0];
+    } else if (children.length > 1) {
+      return children;
+    } else {
+      return document.createTextNode('');
+    }
   });
 
-  // Compose table: header, then one row of columns
-  const tableArray = [
-    ['Columns (columns19)'],
-    cells
-  ];
-
-  // Create and replace with table
-  const table = WebImporter.DOMUtils.createTable(tableArray, document);
-  element.replaceWith(table);
+  // Only build table if there's at least one column
+  if (contentRow.length > 0) {
+    const table = WebImporter.DOMUtils.createTable([
+      ['Columns (columns19)'],
+      contentRow
+    ], document);
+    element.replaceWith(table);
+  }
 }

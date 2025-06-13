@@ -1,41 +1,28 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  // Get the main container
-  const container = element.querySelector(':scope > .container');
+  const container = element.querySelector('.container');
   if (!container) return;
 
-  // Get left column: content area
-  const leftCol = container.querySelector(':scope > .hero-banner-image-descr__content');
-  // Get right column: image area
-  const rightCol = container.querySelector(':scope > .hero-banner-image-descr__image-wrapper');
+  const left = container.querySelector('.hero-banner-image-descr__content');
+  const right = container.querySelector('.hero-banner-image-descr__image-wrapper');
 
-  // Prepare left column content array
-  const leftColParts = [];
-  if (leftCol) {
-    // Title (h3)
-    const title = leftCol.querySelector('.hero-banner-image-descr__title');
-    if (title) leftColParts.push(title);
-    // Description (text block)
-    const descr = leftCol.querySelector('.hero-banner-image-descr__text');
-    if (descr) leftColParts.push(descr);
-    // Download link (button)
-    const btn = leftCol.querySelector('a.button, a.cta-download-link');
-    if (btn) leftColParts.push(btn);
+  const leftCell = [];
+  if (left) {
+    Array.from(left.children).forEach((child) => leftCell.push(child));
   }
 
-  // Prepare right column content
-  let rightColContent = null;
-  if (rightCol) {
-    const img = rightCol.querySelector('img');
-    if (img) rightColContent = img;
+  const rightCell = [];
+  if (right) {
+    const img = right.querySelector('img');
+    if (img) rightCell.push(img);
   }
 
-  // Header row must match example exactly
+  // Header row must have two columns: header text and empty string for alignment
   const cells = [
-    ['Columns block'],
-    [leftColParts, rightColContent || '']
+    ['Columns (columns23)', ''],
+    [leftCell, rightCell],
   ];
 
-  const block = WebImporter.DOMUtils.createTable(cells, document);
-  element.replaceWith(block);
+  const table = WebImporter.DOMUtils.createTable(cells, document);
+  element.replaceWith(table);
 }
