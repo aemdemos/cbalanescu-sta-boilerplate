@@ -1,28 +1,40 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
+  // Get the container that holds the columns
   const container = element.querySelector('.container');
   if (!container) return;
 
-  const left = container.querySelector('.hero-banner-image-descr__content');
-  const right = container.querySelector('.hero-banner-image-descr__image-wrapper');
+  // Get the two column wrappers
+  // Left: content, Right: image
+  const contentCol = container.querySelector('.hero-banner-image-descr__content');
+  const imageCol = container.querySelector('.hero-banner-image-descr__image-wrapper');
 
-  const leftCell = [];
-  if (left) {
-    Array.from(left.children).forEach((child) => leftCell.push(child));
+  // Assemble left column: reference all present elements
+  const leftCol = document.createElement('div');
+  if (contentCol) {
+    Array.from(contentCol.childNodes).forEach((node) => {
+      if (
+        node.nodeType === Node.ELEMENT_NODE ||
+        (node.nodeType === Node.TEXT_NODE && node.textContent.trim())
+      ) {
+        leftCol.appendChild(node);
+      }
+    });
   }
 
-  const rightCell = [];
-  if (right) {
-    const img = right.querySelector('img');
-    if (img) rightCell.push(img);
+  // Right column: reference the whole image wrapper so it includes the image
+  let rightCol = null;
+  if (imageCol) {
+    rightCol = imageCol;
+  } else {
+    rightCol = document.createElement('div');
   }
 
-  // Header row must have two columns: header text and empty string for alignment
-  const cells = [
-    ['Columns (columns23)', ''],
-    [leftCell, rightCell],
+  // --- CRITICAL FIX: Header row text is EXACTLY as in the prompt example
+  const tableRows = [
+    ['Columns (columns23)'], // Header row must match the example exactly
+    [leftCol, rightCol]      // Content row as two columns
   ];
-
-  const table = WebImporter.DOMUtils.createTable(cells, document);
-  element.replaceWith(table);
+  const block = WebImporter.DOMUtils.createTable(tableRows, document);
+  element.replaceWith(block);
 }

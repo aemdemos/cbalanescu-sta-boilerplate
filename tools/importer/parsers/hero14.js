@@ -1,75 +1,77 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  // 1. Header row: exactly 'Hero' in one column
-  const headerRow = ['Hero'];
-
-  // 2. Background image row: just the background image <img>, or blank if not present
-  let bgUrl = null;
-  let bgDiv = element.querySelector('.text-with-bg__bg:not(.mobile)');
-  if (!bgDiv) {
-    bgDiv = element.querySelector('.text-with-bg__bg');
-  }
-  if (bgDiv && bgDiv.style && bgDiv.style.backgroundImage) {
-    const match = bgDiv.style.backgroundImage.match(/url\(["']?([^"')]+)["']?\)/);
-    if (match && match[1]) {
-      bgUrl = match[1];
-      // If relative, try to prepend document.location.origin ONLY if available and not null/undefined and not 'null'
-      if (bgUrl.startsWith('/')) {
-        let origin;
-        try {
-          origin = document && document.location && document.location.origin ? document.location.origin : undefined;
-        } catch(e){}
-        // Only prepend origin if it's a non-empty string and not 'null'
-        if (origin && origin !== 'null') {
-          bgUrl = origin + bgUrl;
-        } // else leave bgUrl as-is (relative)
+  // Extract background image for its own row
+  let backgroundElem = '';
+  const bgDiv = element.querySelector('.text-with-bg__bg');
+  if (
+    bgDiv &&
+    typeof bgDiv.style === 'object' &&
+    typeof bgDiv.style.backgroundImage === 'string' &&
+    bgDiv.style.backgroundImage
+  ) {
+    const match = bgDiv.style.backgroundImage.match(/url\(['"]?([^'"]+)['"]?\)/);
+    if (match) {
+      let bgImgUrl = match[1];
+      // Only attempt to make absolute if needed and possible
+      if (bgImgUrl && !/^https?:/i.test(bgImgUrl)) {
+        if (bgImgUrl.startsWith('/')) {
+          // Root-relative: leave as is
+          // Do nothing
+        } else if (
+          typeof document.baseURI === 'string' &&
+          document.baseURI &&
+          document.baseURI !== 'null'
+        ) {
+          // Relative, and baseURI available: resolve relative to baseURI
+          try {
+            bgImgUrl = new URL(bgImgUrl, document.baseURI).toString();
+          } catch (e) {
+            // fallback, leave as is
+          }
+        }
       }
+      const img = document.createElement('img');
+      img.src = bgImgUrl;
+      img.alt = '';
+      backgroundElem = img;
     }
   }
-  let bgImageEl = null;
-  if (bgUrl) {
-    bgImageEl = document.createElement('img');
-    bgImageEl.src = bgUrl;
-    bgImageEl.alt = '';
-  }
-  const bgImageRow = [bgImageEl ? bgImageEl : ''];
 
-  // 3. Content row
-  const content = [];
-
-  // Title as h1
-  const titleEl = element.querySelector('.text-with-bg__title');
-  if (titleEl) {
+  // Extract title (h4)
+  let headingElem = '';
+  const title = element.querySelector('h4');
+  if (title) {
     const h1 = document.createElement('h1');
-    h1.innerHTML = titleEl.innerHTML;
-    content.push(h1);
+    h1.innerHTML = title.innerHTML;
+    headingElem = h1;
   }
-  // Logo
-  const logoImg = element.querySelector('img.text-with-bg__logo');
-  if (logoImg) {
-    content.push(logoImg);
-  }
-  // Description
-  const desc = element.querySelector('.text-with-bg__desc');
-  if (desc) {
-    Array.from(desc.childNodes).forEach((node) => {
-      if (
-        (node.nodeType === 1 && node.tagName === 'P') || // ELEMENT_NODE
-        (node.nodeType === 3 && node.textContent.trim()) // TEXT_NODE
-      ) {
-        content.push(node);
-      }
-    });
-  }
-  // CTA
-  const cta = element.querySelector('a.button');
-  if (cta) {
-    content.push(cta);
-  }
-  const contentRow = [content.length ? content : ''];
 
-  // Final block table: header, background image, content
-  const rows = [headerRow, bgImageRow, contentRow];
-  const block = WebImporter.DOMUtils.createTable(rows, document);
-  element.replaceWith(block);
+  // Extract logo image (optional)
+  const logoImg = element.querySelector('.text-with-bg__logo');
+
+  // Extract description paragraphs
+  let descElems = [];
+  const descDiv = element.querySelector('.text-with-bg__desc');
+  if (descDiv) {
+    descElems = Array.from(descDiv.children);
+  }
+
+  // Extract CTA button (optional)
+  const cta = element.querySelector('a.button');
+
+  // Compose third row content: logo (optional), heading, desc, cta (if present)
+  const contentElems = [];
+  if (logoImg) contentElems.push(logoImg);
+  if (headingElem) contentElems.push(headingElem);
+  if (descElems.length) contentElems.push(...descElems);
+  if (cta) contentElems.push(cta);
+
+  // Strictly match the example: 3 rows, 1 column, header row is ['Hero'] exactly
+  const cells = [
+    ['Hero'],
+    [backgroundElem || ''],
+    [contentElems.length === 1 ? contentElems[0] : contentElems],
+  ];
+  const table = WebImporter.DOMUtils.createTable(cells, document);
+  element.replaceWith(table);
 }

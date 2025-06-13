@@ -1,48 +1,46 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  // Prepare header row exactly as in example
+  // Table header exactly as required
   const headerRow = ['Cards (cards15)'];
-  const rows = [];
-
   // Select all direct card items
-  const items = element.querySelectorAll(':scope > .text-image-item');
-  items.forEach((item) => {
-    // Image element - referenced directly
+  const items = element.querySelectorAll(':scope > div');
+  const rows = Array.from(items).map((item) => {
+    // Image is always present in the card
     const img = item.querySelector('img');
-
-    // Content block
-    const contentBlock = item.querySelector('.text-image-item__content');
-    // Compose content cell: title (strong), then description
-    const cellContent = [];
-    if (contentBlock) {
-      const title = contentBlock.querySelector('.text-image-item__title');
+    // Card text content
+    const content = item.querySelector('.text-image-item__content');
+    let textCellContent = [];
+    if (content) {
+      // Title as <strong>
+      const title = content.querySelector('.text-image-item__title');
       if (title) {
-        // Use <strong> to match bolded headings in example
         const strong = document.createElement('strong');
         strong.textContent = title.textContent.trim();
-        cellContent.push(strong);
+        textCellContent.push(strong);
       }
-      const desc = contentBlock.querySelector('.text-image-item__description');
+      // Description (<p> is inside .text-image-item__description)
+      const desc = content.querySelector('.text-image-item__description');
       if (desc) {
-        // If there is a title, add a <br> before description
-        if (title) {
-          cellContent.push(document.createElement('br'));
+        // Add line break if title exists
+        if (textCellContent.length > 0) {
+          textCellContent.push(document.createElement('br'));
         }
-        // Add all children of description, preserving HTML (e.g. <p>, <sup>)
-        Array.from(desc.childNodes).forEach((node) => cellContent.push(node));
+        // Reference the <p> directly if present, otherwise the full desc
+        const p = desc.querySelector('p');
+        if (p) {
+          textCellContent.push(p);
+        } else {
+          textCellContent.push(desc);
+        }
       }
     }
-    // Always provide two cells: [image, content]
-    rows.push([
-      img || '',
-      cellContent.length ? cellContent : '',
-    ]);
+    // If textCellContent is empty (bad HTML), just leave cell blank
+    return [img, textCellContent.length > 0 ? textCellContent : ''];
   });
-
+  // Build the full table
   const table = WebImporter.DOMUtils.createTable([
     headerRow,
-    ...rows,
+    ...rows
   ], document);
   element.replaceWith(table);
-  return table;
 }

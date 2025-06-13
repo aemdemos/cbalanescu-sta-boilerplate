@@ -1,26 +1,31 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  // 1. Find all top-level hero banner columns: text and image
-  // The block is structured: left (text) and right (image)
+  // Find the main column wrapper in the block
+  const wrapper = element.querySelector('.hero-banner-image-descr.wrapper');
 
-  // Get the text content column
-  const contentCol = element.querySelector('.hero-banner-image-descr__content');
-  // Find the desktop image (prefer desktop over mobile)
-  let img = null;
-  const desktopImgWrap = element.querySelector('.hero-banner-image-descr__image-wrapper.desktop-image');
-  if (desktopImgWrap) {
-    img = desktopImgWrap.querySelector('img');
-  } else {
-    const mobileImgWrap = element.querySelector('.hero-banner-image-descr__image-wrapper.mobile-image');
-    if (mobileImgWrap) img = mobileImgWrap.querySelector('img');
+  // Get text content block (left column)
+  const contentDiv = wrapper && wrapper.querySelector('.hero-banner-image-descr__content .hero-banner-image-descr__text');
+
+  // Get the desktop and/or mobile image (right column)
+  let image = null;
+  let imageDiv = null;
+  // Prefer desktop image, fallback to mobile
+  imageDiv = wrapper && wrapper.querySelector('.hero-banner-image-descr__image-wrapper.desktop-image');
+  if (!imageDiv) {
+    imageDiv = wrapper && wrapper.querySelector('.hero-banner-image-descr__image-wrapper.mobile-image');
+  }
+  if (imageDiv) {
+    image = imageDiv.querySelector('img');
   }
 
-  // Build cells array for WebImporter.DOMUtils.createTable
-  const cells = [
-    ['Columns (columns16)'], // exact header required
-    [contentCol, img]        // left cell: content, right cell: image
-  ];
-  
-  const table = WebImporter.DOMUtils.createTable(cells, document);
+  // Prepare the columns block table
+  const headerRow = ['Columns (columns16)'];
+  // Each cell is either the content block or image element, or null if not found
+  const contentRow = [contentDiv || '', image || ''];
+  const table = WebImporter.DOMUtils.createTable([
+    headerRow,
+    contentRow
+  ], document);
+
   element.replaceWith(table);
 }

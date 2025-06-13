@@ -1,32 +1,47 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  // Table header as in the example
+  // Header row for the block
   const headerRow = ['Cards (cards20)'];
 
-  // Find the container with the icons/cards
-  const iconsBlockItem = element.querySelector('.icons-block-item');
-  if (!iconsBlockItem) return;
-  const cards = iconsBlockItem.querySelectorAll('.icon-item');
+  // Find the block containing the cards: .icons-block-item
+  const iconsBlock = element.querySelector('.icons-block-item');
+  if (!iconsBlock) return;
 
-  const rows = [];
+  // Select all cards inside the block
+  const cardNodes = iconsBlock.querySelectorAll('.icon-item');
+  const rows = [headerRow];
 
-  cards.forEach(card => {
-    // First cell: the icon image
-    const image = card.querySelector('.icon-item__icon');
-    // Second cell: Title as <h5> (or heading), plus description
+  cardNodes.forEach(card => {
+    // First column: icon (img)
+    const img = card.querySelector('.icon-item__icon');
+
+    // Second column: title (h5) + content
     const title = card.querySelector('.icon-item__title');
-    const desc = card.querySelector('.icon-item__content');
+    const content = card.querySelector('.icon-item__content');
 
-    // Build the content cell by referencing existing elements only
-    const cellChildren = [];
-    if (title) cellChildren.push(title);
-    if (desc) cellChildren.push(desc);
+    // Compose the text cell, referencing existing elements directly
+    const textCell = document.createElement('div');
+    if (title) {
+      // Use existing title element, promote to strong for visual hierarchy as in the example
+      const strong = document.createElement('strong');
+      strong.textContent = title.textContent;
+      textCell.appendChild(strong);
+      // Add line break if there is content after title
+      if (content) textCell.appendChild(document.createElement('br'));
+    }
+    if (content) {
+      // Append all original child nodes (e.g., paragraphs, lists)
+      Array.from(content.childNodes).forEach(node => {
+        textCell.appendChild(node);
+      });
+    }
 
-    rows.push([image, cellChildren]);
+    rows.push([
+      img,
+      textCell
+    ]);
   });
 
-  // Compose the block table
-  const tableArray = [headerRow, ...rows];
-  const block = WebImporter.DOMUtils.createTable(tableArray, document);
-  element.replaceWith(block);
+  const table = WebImporter.DOMUtils.createTable(rows, document);
+  element.replaceWith(table);
 }

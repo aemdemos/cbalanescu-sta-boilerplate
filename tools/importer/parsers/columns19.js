@@ -1,29 +1,28 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  // Get all direct column divs (should be two for this layout)
-  const columns = Array.from(element.querySelectorAll(':scope > div'));
+  // Find all immediate children that represent columns
+  const columns = Array.from(element.querySelectorAll(':scope > .two-column-icon-item__col'));
+  // If not found, fallback to all immediate div children (for robustness)
+  const cols = columns.length ? columns : Array.from(element.querySelectorAll(':scope > div'));
 
-  // For each column, get all children (should be one icon-item, but robust for future changes)
-  const contentRow = columns.map((col) => {
-    // If the column only has one element, use it directly, else group all its content
-    const children = Array.from(col.childNodes).filter((n) => 
-      n.nodeType === 1 || (n.nodeType === 3 && n.textContent.trim())
-    );
-    if (children.length === 1) {
-      return children[0];
-    } else if (children.length > 1) {
-      return children;
-    } else {
-      return document.createTextNode('');
-    }
+  // For each column, get its icon-item element as the main content (preserving DOM reference)
+  const contentRow = cols.map(col => {
+    const iconItem = col.querySelector('.icon-item');
+    return iconItem || col;
   });
 
-  // Only build table if there's at least one column
-  if (contentRow.length > 0) {
-    const table = WebImporter.DOMUtils.createTable([
-      ['Columns (columns19)'],
-      contentRow
-    ], document);
-    element.replaceWith(table);
-  }
+  // Do NOT create empty content rows
+  if (contentRow.length === 0) return;
+
+  // The header row must have exactly one column (the block name), not one per column
+  const headerRow = ['Columns (columns19)'];
+
+  // Prepare the cells for createTable: header is a single cell, then the contentRow
+  const cells = [headerRow, contentRow];
+
+  // Create the table
+  const table = WebImporter.DOMUtils.createTable(cells, document);
+
+  // Replace the original element with the new table
+  element.replaceWith(table);
 }
