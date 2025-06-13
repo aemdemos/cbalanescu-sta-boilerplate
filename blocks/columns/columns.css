@@ -1,3 +1,4 @@
+
 /* --- COLUMN LAYOUT BASE --- */
 .columns > div {
   display: flex;
@@ -99,6 +100,7 @@
     max-width: 95vw;
     padding: 0 8px;
   }
+
   .columns.columns11 > div {
     flex-direction: column;
     gap: 32px;
@@ -108,6 +110,7 @@
     justify-content: center;
     align-items: center;
   }
+
   .columns.columns11 > div > div {
     width: 100%;
     max-width: 100%;
@@ -142,6 +145,7 @@
     max-width: 100%;
     padding: 0 16px;
   }
+
   .columns.columns2 > div > div:last-child,
   .columns.columns2 > div > div:first-child {
     max-width: 100%;
@@ -150,6 +154,7 @@
     min-height: 0;
     padding-top: 0;
   }
+
   .columns.columns2 > div > div:last-child .button {
     width: 100%;
     font-size: 1rem;
@@ -164,6 +169,7 @@
     max-width: 100%;
     padding: 0 12px;
   }
+
   .columns.columns2 > div > div:last-child,
   .columns.columns2 > div > div:first-child {
     max-width: 100%;
@@ -172,6 +178,7 @@
     min-height: 0;
     padding-top: 0;
   }
+
   .columns.columns2 > div > div:last-child a.button,
   .columns.columns2 > div > div:last-child button,
   .columns.columns2 > div > div:last-child .button {
@@ -180,6 +187,7 @@
     padding: 16px 0;
     align-self: stretch;
   }
+
   .columns.columns2 > div > div:first-child picture,
   .columns.columns2 > div > div:first-child img {
     max-width: 100%;
@@ -384,6 +392,7 @@
     flex-direction: unset;
     gap: 24px;
   }
+
   .columns > div > div {
     flex: 1;
     order: unset;
@@ -505,18 +514,32 @@
     flex-direction: column;
     gap: 32px;
   }
+
   .columns.columns7 > div > div:first-child,
   .columns.columns7 > div > .columns-img-col {
     max-width: 100%;
     flex-basis: 100%;
     width: 100%;
   }
+
   .columns.columns7 .columns-img-col img {
     max-width: 90vw;
     width: 90vw;
   }
+
   .columns.columns7 .columns-img-col a,
   .columns.columns7 .columns-img-col p > a {
     max-width: 90vw;
   }
+}
+
+/* Merged .columns.columns16 selector */
+.columns.columns16 {
+  background: #fff;
+  border: 2px solid #C7F400;
+  border-radius: 16px;
+  padding: 32px;
+  box-sizing: border-box;
+  max-width: 1092px;
+  margin: 0 auto 32px;
 }
