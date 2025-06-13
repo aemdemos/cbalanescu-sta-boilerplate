@@ -1,36 +1,32 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  // Find the .tree-column-teaser-block which contains the columns
-  const columnsWrapper = element.querySelector('.tree-column-teaser-block');
-  if (!columnsWrapper) return;
+  // Find the block containing the columns
+  const teaserBlock = element.querySelector(':scope > .tree-column-teaser-block');
+  let columns = [];
 
-  // Get direct children of the columns wrapper (should be the column divs)
-  const columnDivs = Array.from(columnsWrapper.children);
+  if (teaserBlock) {
+    columns = Array.from(teaserBlock.querySelectorAll(':scope > .simple-teaser-item'));
+  } else {
+    columns = Array.from(element.querySelectorAll(':scope > .simple-teaser-item'));
+  }
 
-  // If there are no columns, do not replace
-  if (!columnDivs.length) return;
+  // Defensive: if still empty, fallback to direct children
+  if (!columns.length) {
+    columns = Array.from(element.children);
+  }
 
-  // The table header must be a string (not an element)
+  // Remove any columns that are empty (no child nodes and no text)
+  columns = columns.filter(col => col && (col.textContent.trim() || col.querySelector('*')));
+
+  // The header row must be an array with a single string cell (exactly)
   const headerRow = ['Columns (columns7)'];
 
-  // For the content row, each cell must be a Node, not an Element already in the DOM.
-  // We must move, not reference, to avoid DOM hierarchy errors.
-  // So: remove the node from its parent before adding to the table if not already detached.
-  // We'll detach them in order here:
-  const contentRow = columnDivs.map((col) => {
-    // Remove from current parent if still attached
-    if (col.parentNode) {
-      col.parentNode.removeChild(col);
-    }
-    return col;
-  });
+  // The second row must be an array with each column as a separate cell (must be an array!)
+  const dataRow = columns;
 
-  // Create the columns block table
-  const table = WebImporter.DOMUtils.createTable([
-    headerRow,
-    contentRow,
-  ], document);
+  // Final cells array for the table: rows of arrays
+  const cells = [headerRow, dataRow];
 
-  // Replace the original element with the new table
+  const table = WebImporter.DOMUtils.createTable(cells, document);
   element.replaceWith(table);
 }

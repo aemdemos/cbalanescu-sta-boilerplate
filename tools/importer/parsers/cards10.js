@@ -1,57 +1,49 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
   const headerRow = ['Cards (cards10)'];
-  const rows = [headerRow];
-
-  // Find all card items (direct children)
-  const cards = element.querySelectorAll(':scope > .teaser-item');
-
-  cards.forEach(card => {
-    // First column: the image (mandatory)
+  const cards = Array.from(element.querySelectorAll(':scope > .teaser-item'));
+  const ELEMENT_NODE = 1;
+  const TEXT_NODE = 3;
+  const rows = cards.map(card => {
     const img = card.querySelector('img');
-
-    // Second column: text content (title, description, CTA)
     const content = card.querySelector('.teaser-item__content');
-    const cellContent = [];
-
-    // Title (styled as bold)
+    const frag = document.createDocumentFragment();
+    // Title
     const titleDiv = content && content.querySelector('.teaser-item__title');
-    if (titleDiv) {
+    if (titleDiv && titleDiv.textContent.trim()) {
       const strong = document.createElement('strong');
       strong.textContent = titleDiv.textContent.trim();
-      cellContent.push(strong);
-      cellContent.push(document.createElement('br'));
+      frag.appendChild(strong);
+      frag.appendChild(document.createElement('br'));
     }
-
-    // Description
+    // Description (flatten to plain text, not <p>)
     const descDiv = content && content.querySelector('.teaser-item__desc');
     if (descDiv) {
-      // If a <p> child is present, use it, else use textContent
-      const paragraph = descDiv.querySelector('p');
-      if (paragraph) {
-        cellContent.push(paragraph);
-      } else if (descDiv.textContent.trim()) {
-        cellContent.push(document.createTextNode(descDiv.textContent.trim()));
-      }
-      cellContent.push(document.createElement('br'));
+      // Grab all textContent from child nodes (including <p>) and add as plain text with a br
+      Array.from(descDiv.childNodes).forEach(node => {
+        let txt = '';
+        if (node.nodeType === ELEMENT_NODE || node.nodeType === TEXT_NODE) {
+          txt = node.textContent.trim();
+        }
+        if (txt) {
+          frag.appendChild(document.createTextNode(txt));
+          frag.appendChild(document.createElement('br'));
+        }
+      });
     }
-
-    // CTA (link at the bottom)
-    const cta = content && content.querySelector('a');
+    // CTA
+    const cta = content && content.querySelector('a[href]');
     if (cta) {
-      cellContent.push(cta);
+      frag.appendChild(document.createElement('br'));
+      frag.appendChild(cta);
     }
-
-    // Clean up any leading/trailing <br>s
-    while (cellContent[0] && cellContent[0].nodeType === 1 && cellContent[0].tagName === 'BR') cellContent.shift();
-    while (cellContent[cellContent.length-1] && cellContent[cellContent.length-1].nodeType === 1 && cellContent[cellContent.length-1].tagName === 'BR') cellContent.pop();
-
-    rows.push([
-      img,
-      cellContent
-    ]);
+    // Remove trailing <br> if present
+    while (frag.lastChild && frag.lastChild.tagName === 'BR') frag.removeChild(frag.lastChild);
+    return [img, frag];
   });
-
-  const block = WebImporter.DOMUtils.createTable(rows, document);
-  element.replaceWith(block);
+  const table = WebImporter.DOMUtils.createTable([
+    headerRow,
+    ...rows
+  ], document);
+  element.replaceWith(table);
 }

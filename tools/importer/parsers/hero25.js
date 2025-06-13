@@ -1,31 +1,26 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  // Find the main content container
-  const content = element.querySelector('.full-size-modal__content');
-  if (!content) {
-    element.replaceWith();
-    return;
-  }
-  // Find the image
-  const img = content.querySelector('.priority-tool-entry-form__img');
-  // Find the title (h3)
-  const title = content.querySelector('.priority-tool-entry-form__title');
-  // Find the description
+  // Find the main content block
+  const content = element.querySelector('.priority-tool-entry-form');
+  // Get the image (if any)
+  const img = content.querySelector('img');
+  // Get the heading/title (as heading element)
+  const heading = content.querySelector('.priority-tool-entry-form__title');
+  // Get the description element
   const desc = content.querySelector('.priority-tool-entry-form__desc');
-  // Find the CTA button inside the form
-  const ctaForm = content.querySelector('.priority-tool-entry-form__form');
-  // Prepare block content (preserve original order & semantics)
-  const blockContent = [];
-  if (title) blockContent.push(title);
-  if (desc) blockContent.push(desc);
-  if (ctaForm) blockContent.push(ctaForm);
-  // Build table rows as per the markdown example
-  const rows = [
+  // Get the CTA button wrapper
+  const btnWrapper = content.querySelector('.priority-tool-entry-form__btn-wrapper');
+  // Compose the third row content: heading, description, button
+  const row3Content = [];
+  if (heading) row3Content.push(heading);
+  if (desc) row3Content.push(desc);
+  if (btnWrapper) row3Content.push(btnWrapper);
+  // Build the table as per the markdown example, with exact header 'Hero'
+  const cells = [
     ['Hero'],
     [img ? img : ''],
-    [blockContent.length ? blockContent : ''],
+    [row3Content.length ? row3Content : '']
   ];
-  // Create and replace
-  const table = WebImporter.DOMUtils.createTable(rows, document);
+  const table = WebImporter.DOMUtils.createTable(cells, document);
   element.replaceWith(table);
 }

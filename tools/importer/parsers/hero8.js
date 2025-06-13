@@ -1,16 +1,16 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  // Extract the image (if present)
-  const img = element.querySelector('img') || '';
-  // Extract the heading (if present)
-  const heading = element.querySelector('h5') || '';
+  // Extract image and title from the given element
+  const img = element.querySelector('img');
+  const title = element.querySelector('h5');
 
-  // The table should have three rows: header, image, heading
-  const cells = [
+  // Assemble the Hero block table per the example: 1 col, 3 rows, header is 'Hero'
+  const rows = [
     ['Hero'],
-    [img],
-    [heading],
+    [img || ''],
+    [title || '']
   ];
-  const table = WebImporter.DOMUtils.createTable(cells, document);
+
+  const table = WebImporter.DOMUtils.createTable(rows, document);
   element.replaceWith(table);
 }

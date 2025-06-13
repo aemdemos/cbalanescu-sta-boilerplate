@@ -2,26 +2,26 @@
 export default function parse(element, { document }) {
   // Find the hero section
   const section = element.querySelector('section.hero-banner-image');
-  // Find the image (background and <img> are the same)
+  if (!section) return;
+
+  // Get the <img> element for the image row
   const img = section.querySelector('img.hero-banner-image__img');
-  // Find the heading
+
+  // Get the text/title content and preserve its heading level (should be h2 here)
   let heading = '';
-  const titleDiv = section.querySelector('.hero-banner-image__text');
-  if (titleDiv) {
-    const h2 = titleDiv.querySelector('h2.hero-banner-image__title');
-    if (h2) {
-      // Use h1 as in the example, reparent existing content
-      const h1 = document.createElement('h1');
-      h1.innerHTML = h2.innerHTML;
-      heading = h1;
-    }
+  const headingEl = section.querySelector('.hero-banner-image__title');
+  if (headingEl) {
+    heading = headingEl;
   }
-  // Build the table: header, image, heading - each as a separate row
-  const rows = [
+
+  // Compose the block table: header, image, heading (each in its own row, one column)
+  const cells = [
     ['Hero'],
-    [img ? img : ''],
-    [heading ? heading : '']
+    [img || ''],
+    [heading || '']
   ];
-  const table = WebImporter.DOMUtils.createTable(rows, document);
+  const table = WebImporter.DOMUtils.createTable(cells, document);
+
+  // Replace the original element
   element.replaceWith(table);
 }

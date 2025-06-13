@@ -1,47 +1,50 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  // Find the two main columns for the block:
-  // Left: video + transcript
-  // Right: title, content, CTA
-  // The structure is: .container > .hero-banner-video (left), .hero-banner-video__text (right)
-
-  // Find left (video & transcript)
-  const videoSection = element.querySelector('.hero-banner-video');
-  let leftColContent = [];
-  if (videoSection) {
-    // Locate the poster image for the video (visual content for the column)
-    const videoWrapper = videoSection.querySelector('.hero-banner-video__video-wrapper');
-    let posterImg = null;
-    if (videoWrapper) {
-      const poster = videoWrapper.querySelector('.vjs-poster img');
-      if (poster) posterImg = poster;
+  // Find the two main columns: left (video and transcript), right (text, cta)
+  const children = Array.from(element.querySelectorAll(':scope > div'));
+  let leftCol = null, rightCol = null;
+  // Identify left and right columns by inner content/classes
+  children.forEach(child => {
+    if (child.querySelector('.hero-banner-video__video-wrapper')) {
+      leftCol = child;
+    } else if (child.classList.contains('hero-banner-video__text')) {
+      rightCol = child;
     }
-    if (posterImg) leftColContent.push(posterImg);
+  });
+  // Fallback by order if not found
+  if (!leftCol && children.length > 0) leftCol = children[0];
+  if (!rightCol && children.length > 1) rightCol = children[1];
 
-    // Optionally include transcript content if available
-    const transcriptDiv = videoSection.querySelector('.hero-banner-video__transcript');
-    if (transcriptDiv) {
-      // The .collapse__content div contains all transcript <p>s
-      const transcriptContent = transcriptDiv.querySelector('.collapse__content');
-      if (transcriptContent) {
-        leftColContent.push(transcriptContent);
-      }
-    }
+  // Compose content for each column, referencing existing elements
+  let leftContent = [];
+  if (leftCol) {
+    // Try to include video and transcript
+    const videoWrapper = leftCol.querySelector('.hero-banner-video__video-wrapper');
+    const transcript = leftCol.querySelector('.hero-banner-video__transcript');
+    if (videoWrapper) leftContent.push(videoWrapper);
+    if (transcript) leftContent.push(transcript);
+    // Fallback: just use leftCol if nothing else
+    if (leftContent.length === 0) leftContent = [leftCol];
   }
 
-  // Find right (title, content, CTA)
-  const rightCol = element.querySelector('.hero-banner-video__text');
+  let rightContent = [];
+  if (rightCol) {
+    // Title, text content, CTA
+    const titleWrapper = rightCol.querySelector('.hero-banner-video__title-wrapper');
+    const content = rightCol.querySelector('.hero-banner-video__content');
+    const cta = rightCol.querySelector('a.button, a.cta-link');
+    if (titleWrapper) rightContent.push(titleWrapper);
+    if (content) rightContent.push(content);
+    if (cta) rightContent.push(cta);
+    // Fallback: just use rightCol if nothing else
+    if (rightContent.length === 0) rightContent = [rightCol];
+  }
 
-  // If either column is missing, fall back to an empty div to preserve table shape
-  const leftCell = leftColContent.length > 0 ? leftColContent : document.createElement('div');
-  const rightCell = rightCol ? rightCol : document.createElement('div');
-
-  // Correct header row EXACLTY as required
-  const cells = [
+  // Table creation
+  const table = WebImporter.DOMUtils.createTable([
     ['Columns (columns2)'],
-    [leftCell, rightCell],
-  ];
+    [leftContent, rightContent],
+  ], document);
 
-  const table = WebImporter.DOMUtils.createTable(cells, document);
   element.replaceWith(table);
 }

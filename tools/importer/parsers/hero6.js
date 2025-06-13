@@ -1,44 +1,45 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
   // Find the hero section
-  const section = element.querySelector('section.hero-banner-image');
-  // Get the image element
-  const img = section ? section.querySelector('img.hero-banner-image__img') : null;
-  // Get the text block
-  const textBlock = section ? section.querySelector('.hero-banner-image__text') : null;
+  const section = element.querySelector('.hero-banner-image');
 
-  // Extract title
-  let h1 = null;
-  if (textBlock) {
-    const title = textBlock.querySelector('.hero-banner-image__title');
-    if (title) {
-      h1 = document.createElement('h1');
-      h1.innerHTML = title.innerHTML.trim();
+  // Header row: exactly as in the example
+  const headerRow = ['Hero'];
+
+  // Image row: just the image element
+  let imageEl = section && section.querySelector('img');
+  const imageRow = [imageEl || ''];
+
+  // Text row: headline and description, as a single cell
+  let textCellContent = [];
+  if (section) {
+    const textContainer = section.querySelector('.hero-banner-image__text');
+    if (textContainer) {
+      const headline = textContainer.querySelector('.hero-banner-image__title');
+      if (headline && headline.textContent.trim()) {
+        // Use <h1> for semantic match with markdown example
+        const h1 = document.createElement('h1');
+        h1.textContent = headline.textContent.trim();
+        textCellContent.push(h1);
+      }
+      const desc = textContainer.querySelector('.hero-banner-image__desc');
+      if (desc) {
+        Array.from(desc.childNodes).forEach((node) => {
+          textCellContent.push(node.cloneNode(true));
+        });
+      }
     }
   }
-  
-  // Extract description
-  let descP = null;
-  if (textBlock) {
-    const desc = textBlock.querySelector('.hero-banner-image__desc p');
-    if (desc) {
-      descP = document.createElement('p');
-      descP.innerHTML = desc.innerHTML.trim();
-    }
-  }
+  if (textCellContent.length === 0) textCellContent = [''];
+  const textRow = [textCellContent];
 
-  // Compose content cell for row 3 (headline/subhead)
-  const contentCell = document.createElement('div');
-  if (h1) contentCell.appendChild(h1);
-  if (descP) contentCell.appendChild(descP);
+  // Compose the 3-row, 1-column table
+  const table = WebImporter.DOMUtils.createTable([
+    headerRow,
+    imageRow,
+    textRow
+  ], document);
 
-  // Build table rows as in the example: header, image, headline/subhead
-  const rows = [
-    ['Hero'],
-    [img || ''],
-    [contentCell]
-  ];
-
-  const table = WebImporter.DOMUtils.createTable(rows, document);
+  // Replace the original element
   element.replaceWith(table);
 }
