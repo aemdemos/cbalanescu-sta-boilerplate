@@ -1,4 +1,5 @@
 
+
 /* --- COLUMN LAYOUT BASE --- */
 .columns > div {
   display: flex;
@@ -542,4 +543,11 @@
   box-sizing: border-box;
   max-width: 1092px;
   margin: 0 auto 32px;
+}
+
+/* --- MERGED .columns.columns21 FROM BOTH SNIPPETS --- */
+.columns.columns21 {
+  background: #fff;
+  padding: 28px 0 0;
+  display: block;
 }
