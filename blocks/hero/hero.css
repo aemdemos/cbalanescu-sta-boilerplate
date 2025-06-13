@@ -40,19 +40,6 @@
   }
 }
 
-.hero.hero4 {
-  position: relative;
-  width: 100%;
-  min-height: 407px;
-  background: #f2fadb;
-  border: 2px solid #c3ec2d;
-  overflow: hidden;
-  box-sizing: border-box;
-  padding: 0;
-  display: block;
-}
-
-/* Ensure hero content is full width and image fills parent */
 .hero.hero4 > div,
 .hero.hero4 > div > div {
   width: 100%;
@@ -61,6 +48,61 @@
   margin: 0;
   box-sizing: border-box;
   position: static;
+}
+
+.hero.hero4 > div:first-child,
+.hero.hero4 > div:last-child {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  z-index: 1;
+}
+
+.hero.hero4 > div:first-child {
+  top: 18px;
+  height: calc(100% - 18px);
+  display: flex;
+}
+
+.hero.hero4 > div:last-child {
+  top: 18px;
+  height: calc(100% - 18px);
+  z-index: 3;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  pointer-events: none;
+}
+
+.hero.hero4 > div:first-child > div,
+.hero.hero4 picture,
+.hero.hero4 img {
+  width: 100%;
+  height: 100%;
+  min-height: 389px;
+  object-fit: cover;
+  display: block;
+}
+
+.hero.hero6 > div:first-child {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  display: block;
+  pointer-events: none;
+}
+
+.hero.hero6 picture,
+.hero.hero6 img {
+  width: 100%;
+  height: 100%;
+  min-height: 407px;
+  object-fit: cover;
+  display: block;
+  border-radius: 0;
 }
 
 /* Background image setup */
@@ -87,40 +129,6 @@
   box-sizing: border-box;
 }
 
-.hero.hero4 > div:last-child {
-  position: absolute;
-  left: 0;
-  top: 18px;
-  height: calc(100% - 18px);
-  width: 100%;
-  z-index: 3;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-  pointer-events: none;
-}
-
-.hero.hero4 > div:first-child {
-  position: absolute;
-  top: 18px;
-  left: 0;
-  width: 100%;
-  height: calc(100% - 18px);
-  z-index: 1;
-  display: flex;
-}
-
-.hero.hero4 > div:first-child > div,
-.hero.hero4 picture,
-.hero.hero4 img {
-  width: 100%;
-  height: 100%;
-  min-height: 389px;
-  object-fit: cover;
-  display: block;
-}
-
 .hero.hero4::before {
   display: block;
   width: 100%;
@@ -134,7 +142,6 @@
   content: "";
 }
 
-/* Merged and deduped .hero.hero4 h2 rules, replaced deprecated word-break with overflow-wrap */
 .hero.hero4 h2 {
   position: absolute;
   z-index: 2;
@@ -162,6 +169,61 @@
   pointer-events: all;
 }
 
+.hero.hero6 {
+  position: relative;
+  width: 100%;
+  min-height: 407px;
+  background: #F0F7D6;
+  border: 2px solid #BFE140;
+  overflow: hidden;
+  display: block;
+  box-sizing: border-box;
+  padding: 0;
+}
+
+.hero.hero6 > div:last-child {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  min-height: 320px;
+  pointer-events: none;
+}
+
+.hero.hero6 > div:last-child > div {
+  background: #fff;
+  border-radius: 24px;
+  padding: 3.4rem 2.7rem 3.2rem;
+  margin-left: 72px;
+  margin-top: 20px;
+  max-width: 430px;
+  min-width: 320px;
+  box-sizing: border-box;
+  box-shadow: none;
+  pointer-events: all;
+}
+
+.hero.hero6 h1 {
+  color: #232323;
+  font-family: Noto Sans, Arial, sans-serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1.1;
+  margin: 0 0 1.2rem;
+  text-align: left;
+}
+
+.hero.hero6 p {
+  color: #232323;
+  font-size: 1.1rem;
+  font-family: Noto Sans, Arial, sans-serif;
+  font-weight: 400;
+  margin: 0;
+  text-align: left;
+}
+
 @media (width <= 900px) {
   .hero.hero4 {
     min-height: 200px;
@@ -186,5 +248,31 @@
     margin-left: 2vw;
     font-size: 1.1rem;
     max-width: 90vw;
+  }
+
+  .hero.hero6 {
+    min-height: 320px;
+  }
+
+  .hero.hero6 > div:first-child {
+    min-height: 320px;
+    height: 100%;
+  }
+
+  .hero.hero6 > div:last-child {
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 0;
+    height: auto;
+    padding: 2.5rem 0 0;
+  }
+
+  .hero.hero6 > div:last-child > div {
+    max-width: 95vw;
+    min-width: unset;
+    width: 100%;
+    margin-left: 0;
+    margin-top: 0;
+    padding: 1.5rem 1rem;
   }
 }
