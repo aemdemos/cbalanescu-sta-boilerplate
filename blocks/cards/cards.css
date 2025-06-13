@@ -615,3 +615,20 @@
   margin: 0 auto;
   box-sizing: border-box;
 }
+
+/* === MERGED SELECTOR FOR .cards.cards20 === */
+.cards.cards20 {
+  background: #fafbe8;
+  border: 1px solid #a3d45b;
+  border-radius: 22px;
+  box-shadow: 0 4px 18px rgb(62 65 58 / 5%);
+  padding: 0.7rem 2rem 0;
+  max-width: 530px;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+  font-family: var(--body-font-family);
+  display: flex;
+  flex-direction: column;
+  min-height: 730px;
+}
