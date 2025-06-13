@@ -1,5 +1,6 @@
 
 
+
 /* ---- CARDS LAYOUT ---- */
 
 .cards > ul {
@@ -616,4 +617,15 @@
   padding: 48px 0 56px;
   display: block;
   position: relative;
+}
+
+/* ---- MERGED SELECTOR FOR .cards.cards20 ---- */
+.cards.cards20 {
+  background: #f5fbeb;
+  border: 2px solid #c5e086;
+  border-radius: 18px;
+  box-shadow: 0 4px 32px rgb(44 62 80 / 9%);
+  padding: 36px 44px 48px 48px;
+  max-width: 720px;
+  margin: 32px auto;
 }
