@@ -43,6 +43,148 @@
 
 /* --- END MERGED .columns.columns2 SELECTOR --- */
 
+.columns.columns7 > div {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 48px;
+}
+
+/* Image and button stack tightly together */
+.columns.columns7 .columns-img-col p {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  background: none;
+}
+
+/* Left column: width, font, spacing */
+.columns.columns7 > div > div:first-child {
+  max-width: 746px;
+  flex: 0 1 746px;
+  font-size: 18px;
+  line-height: 28.1px;
+  color: #434343;
+  font-family: var(--body-font-family);
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.columns.columns7 > div > div:first-child p {
+  font-size: 18px;
+  line-height: 28.1px;
+  color: #434343;
+  margin-bottom: 20px;
+}
+
+/* Right column: sizing and strict vertical stack */
+.columns.columns7 > div > .columns-img-col {
+  max-width: 340px;
+  flex: 0 1 340px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0;
+  background: none;
+  box-sizing: border-box;
+}
+
+/* Remove only obvious extraneous text if present (Search etc.) */
+.columns.columns7 > div > .columns-img-col > h1,
+.columns.columns7 > div > .columns-img-col > h2,
+.columns.columns7 > div > .columns-img-col > h3,
+.columns.columns7 > div > .columns-img-col > h4,
+.columns.columns7 > div > .columns-img-col > h5,
+.columns.columns7 > div > .columns-img-col > h6,
+.columns.columns7 > div > .columns-img-col > span {
+  display: none;
+}
+
+/* Border only on the image, no min-height or forced size on container */
+.columns.columns7 .columns-img-col img {
+  border: 2px solid #b6d236;
+  border-radius: 4px;
+  display: block;
+  margin: 0;
+  background: #fff;
+  max-width: 322px;
+  width: 322px;
+  height: auto;
+  box-sizing: border-box;
+}
+
+/* Remove background, border, and explicit sizing from picture (container) */
+.columns.columns7 .columns-img-col picture {
+  background: none;
+  padding: 0;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: auto;
+  min-height: 0;
+  height: auto;
+}
+
+/* Button styling: max width matches image, keep tight and centered */
+.columns.columns7 .columns-img-col a,
+.columns.columns7 .columns-img-col p > a {
+  display: block;
+  background: #0080eb;
+  color: #fff;
+  font-weight: bold;
+  font-size: 22px;
+  line-height: 1.3;
+  text-align: center;
+  padding: 20px 32px;
+  border-radius: 18px;
+  text-decoration: none;
+  margin: 0 auto;
+  max-width: 322px;
+  width: 90%;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 6%);
+  transition: background 0.2s;
+}
+
+.columns.columns7 .columns-img-col a:hover,
+.columns.columns7 .columns-img-col a:focus,
+.columns.columns7 .columns-img-col p > a:hover,
+.columns.columns7 .columns-img-col p > a:focus {
+  background: #006bb3;
+}
+
+/* Responsive: stack columns on small screens */
+@media (width <= 900px) {
+  .columns.columns7 > div {
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .columns.columns7 > div > div:first-child,
+  .columns.columns7 > div > .columns-img-col {
+    max-width: 100%;
+    flex-basis: 100%;
+    width: 100%;
+  }
+
+  .columns.columns7 .columns-img-col img {
+    max-width: 90vw;
+    width: 90vw;
+  }
+
+  .columns.columns7 .columns-img-col a,
+  .columns.columns7 .columns-img-col p > a {
+    max-width: 90vw;
+  }
+}
+
 .columns.columns2 > div {
   display: flex;
   flex-direction: row;
