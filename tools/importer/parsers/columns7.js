@@ -1,35 +1,34 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  // Find the block containing the columns
-  const block = element.querySelector('.tree-column-teaser-block');
-  if (!block) return;
+  // Find the columns container
+  const columnsBlock = element.querySelector('.tree-column-teaser-block');
+  let columnDivs = [];
+  if (columnsBlock) {
+    columnDivs = Array.from(columnsBlock.querySelectorAll(':scope > .simple-teaser-item'));
+  }
 
-  // Get column items
-  const columns = block.querySelectorAll(':scope > .simple-teaser-item');
-  if (columns.length < 2) return;
+  // Defensive: only use meaningful columns
+  const bodyRow = columnDivs.length ? columnDivs : [element];
+  const colCount = bodyRow.length;
 
-  // For each column, collect all its children as an array
-  const getChildrenArray = (col) => {
-    // Only take element nodes and non-empty text nodes
-    return Array.from(col.childNodes).filter(
-      node => node.nodeType === 1 || (node.nodeType === 3 && node.textContent.trim().length)
-    );
-  };
-
-  const firstColChildren = getChildrenArray(columns[0]);
-  const secondColChildren = getChildrenArray(columns[1]);
-
-  // Compose columns as arrays (or plain element if only one child)
-  const col1 = firstColChildren.length === 1 ? firstColChildren[0] : firstColChildren;
-  const col2 = secondColChildren.length === 1 ? secondColChildren[0] : secondColChildren;
-
-  // Table structure: header row must be a single cell, content row as columns
-  const headerRow = ['Columns (columns7)'];
+  // Build the table using createTable, then fix the header row colspan
   const cells = [
-    headerRow,
-    [col1, col2]
+    ['Columns (columns7)'],
+    bodyRow
   ];
-
   const table = WebImporter.DOMUtils.createTable(cells, document);
+
+  // Fix the header row: set colspan on the first <th> if needed
+  const headerTh = table.querySelector('tr:first-child th');
+  if (headerTh && colCount > 1) {
+    headerTh.setAttribute('colspan', String(colCount));
+  }
+  // Remove any extra th in the header row, if present
+  const headerRow = table.querySelector('tr:first-child');
+  while (headerRow.children.length > 1) {
+    headerRow.removeChild(headerRow.lastChild);
+  }
+
+  // Replace the original element
   element.replaceWith(table);
 }

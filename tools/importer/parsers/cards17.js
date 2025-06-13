@@ -1,28 +1,22 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  // Build header row exactly as in the block description
+  // Header row exactly as specified
   const headerRow = ['Cards (cards17)'];
-  const rows = [];
 
-  // Find all direct card elements
-  const cardDivs = element.querySelectorAll(':scope .swiper-wrapper > .teaser-item');
+  // Get all card-like direct descendant elements (cards are .teaser-item or .swiper-slide)
+  const cardNodes = element.querySelectorAll(':scope > .teaser-item, :scope > .swiper-slide');
 
-  cardDivs.forEach(card => {
-    // Find the image in the card (if present)
+  const rows = Array.from(cardNodes).map(card => {
+    // Get the image element
     const img = card.querySelector('img');
-    // Find the text content
+    // Get the text content element
     const desc = card.querySelector('.teaser-item__desc');
-    // Edge case: if .teaser-item__desc or img is missing, gracefully degrade
-    const imgCell = img ? img : '';
-    const descCell = desc ? desc : '';
-    rows.push([imgCell, descCell]);
+    // Fallback for robustness if .teaser-item__desc not found
+    const textElem = desc || card;
+    return [img, textElem];
   });
 
-  // Compose table: header then all card rows
-  const table = WebImporter.DOMUtils.createTable([
-    headerRow,
-    ...rows
-  ], document);
-
+  const tableCells = [headerRow, ...rows];
+  const table = WebImporter.DOMUtils.createTable(tableCells, document);
   element.replaceWith(table);
 }

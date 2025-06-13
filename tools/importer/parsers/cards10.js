@@ -1,41 +1,57 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  const headerRow = ['Cards (cards10)'];
-  const rows = [headerRow];
+  // Table header exactly as required
+  const rows = [['Cards (cards10)']];
 
-  // Get all direct .teaser-item children
+  // Find all direct card items
   const items = element.querySelectorAll(':scope > .teaser-item');
   items.forEach(item => {
-    // Image for first cell (reference the DOM node directly)
+    // First column: image (mandatory)
     const img = item.querySelector('img');
 
-    // Text content for second cell
+    // Second column: composite text cell
     const content = item.querySelector('.teaser-item__content');
     const cellContent = [];
 
-    // Title (as <strong> for heading style per example)
-    const titleEl = content && content.querySelector('.teaser-item__title');
-    if (titleEl && titleEl.textContent.trim()) {
+    // Title (styled as heading or bold)
+    const title = content.querySelector('.teaser-item__title');
+    if (title && title.textContent.trim()) {
+      // Use <strong> to convey importance as in the example
       const strong = document.createElement('strong');
-      strong.textContent = titleEl.textContent.trim();
+      strong.textContent = title.textContent.trim();
       cellContent.push(strong);
       cellContent.push(document.createElement('br'));
     }
-    // Description (keep all child nodes, reference if possible)
-    const descEl = content && content.querySelector('.teaser-item__desc');
-    if (descEl) {
-      descEl.childNodes.forEach(node => {
-        // Only include non-empty text or element nodes
-        if (node.nodeType === 1 || (node.nodeType === 3 && node.textContent.trim())) {
+
+    // Description (optional, below heading)
+    const desc = content.querySelector('.teaser-item__desc');
+    if (desc && desc.textContent.trim()) {
+      // Preserve paragraphs if present, else just the text
+      desc.childNodes.forEach(node => {
+        if (node.nodeType === 1) { // Element node
           cellContent.push(node);
+        } else if (node.nodeType === 3 && node.textContent.trim()) { // Text node
+          const span = document.createElement('span');
+          span.textContent = node.textContent;
+          cellContent.push(span);
         }
       });
       cellContent.push(document.createElement('br'));
     }
-    // CTA link, referenced directly
-    const ctaEl = content && content.querySelector('a');
-    if (ctaEl) {
-      cellContent.push(ctaEl);
+
+    // CTA (optional, at the bottom)
+    const cta = content.querySelector('a');
+    if (cta) {
+      cellContent.push(cta);
+    }
+
+    // Remove trailing <br> if present (and not followed by CTA)
+    if (
+      cellContent.length &&
+      cellContent[cellContent.length - 1].tagName === 'BR' &&
+      !(cellContent.length > 1 && cellContent[cellContent.length - 2].tagName === 'A')
+    ) {
+      cellContent.pop();
     }
 
     rows.push([
@@ -43,7 +59,6 @@ export default function parse(element, { document }) {
       cellContent
     ]);
   });
-
   const table = WebImporter.DOMUtils.createTable(rows, document);
   element.replaceWith(table);
 }

@@ -1,43 +1,40 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  // Find the menu wrapper ul (main menu)
-  const menuWrapper = element.querySelector('ul[data-component="menu-wrapper"]');
-  if (!menuWrapper) return;
+  // Find the main menu UL
+  const mainUl = element.querySelector('ul.header-menu__ul[data-component="menu-wrapper"]');
+  if (!mainUl) return;
 
-  // Get all top-level menu items (li.header-main-nav-item)
-  const topLevelItems = Array.from(menuWrapper.children).filter(
-    (li) => li.classList.contains('header-main-nav-item')
-  );
+  // Prepare header row (exactly as in example)
+  const rows = [['Accordion (accordion5)']];
 
-  // Prepare header row exactly as required
-  const headerRow = ['Accordion (accordion5)'];
-  const rows = [headerRow];
+  // Get all top-level li elements for accordion items
+  const mainLis = mainUl.querySelectorAll(':scope > li.header-main-nav-item.has-dropdown');
 
-  // Iterate over top level menu items (accordions)
-  topLevelItems.forEach((li) => {
-    // Title for accordion: combine subtitle and title as plain text, not a link
-    const link = li.querySelector(':scope > a');
-    let titleCell = '';
-    if (link) {
-      const subtitle = link.querySelector('.menu-subtitle');
-      const title = link.querySelector('.menu-item-title');
-      // Compose the text content (subtitle + space + title), trimming whitespace
-      const subtitleText = subtitle && subtitle.textContent.trim() ? subtitle.textContent.trim() + ' ' : '';
-      const titleText = title && title.textContent.trim() ? title.textContent.trim() : '';
-      titleCell = subtitleText + titleText;
+  mainLis.forEach((li) => {
+    // Title cell: plain text: Step # and menu item title
+    const a = li.querySelector(':scope > a');
+    let titleText = '';
+    if (a) {
+      const subtitle = a.querySelector('.menu-subtitle');
+      const title = a.querySelector('.menu-item-title');
+      if (subtitle && typeof subtitle.textContent === 'string' && subtitle.textContent.trim()) {
+        titleText += subtitle.textContent.trim() + ' ';
+      }
+      if (title && typeof title.textContent === 'string') {
+        titleText += title.textContent.trim();
+      }
+      titleText = titleText.trim();
     }
-
-    // Content cell: the submenu as a whole, if present
-    const dropdown = li.querySelector(':scope > ul.dropdown-menu');
+    // Content cell: the submenu UL (may not exist)
     let contentCell = '';
-    if (dropdown) {
-      contentCell = dropdown;
+    const subUl = li.querySelector(':scope > ul.header-menu__ul.dropdown-menu');
+    if (subUl) {
+      contentCell = subUl;
     }
-
-    rows.push([titleCell, contentCell]);
+    rows.push([titleText, contentCell]);
   });
 
-  // Create the block table and replace original element
+  // Create table and replace the original element
   const table = WebImporter.DOMUtils.createTable(rows, document);
   element.replaceWith(table);
 }

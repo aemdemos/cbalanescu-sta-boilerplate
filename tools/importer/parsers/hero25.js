@@ -1,31 +1,53 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  // Find the modal content root
   const content = element.querySelector('.full-size-modal__content');
-  let blockContent = [];
-  if (content) {
-    // Find the main hero sub-block
-    const entryForm = content.querySelector('.priority-tool-entry-form');
-    if (entryForm) {
-      // Collect image, heading, description, and CTA (in order as they appear)
-      const children = Array.from(entryForm.children).filter(el =>
-        el.tagName === 'IMG' ||
-        el.tagName === 'H3' ||
-        el.classList.contains('priority-tool-entry-form__desc') ||
-        el.tagName === 'FORM'
-      );
-      blockContent = children;
+  if (!content) return;
+  const priorityBlock = content.querySelector('.priority-tool-block');
+  if (!priorityBlock) return;
+  const entryForm = priorityBlock.querySelector('.priority-tool-entry-form');
+  if (!entryForm) return;
+
+  // Extract image (optional)
+  const img = entryForm.querySelector('img');
+
+  // Extract and upgrade title (mandatory) to <h1>
+  let heading = entryForm.querySelector('.priority-tool-entry-form__title');
+  if (heading) {
+    if (heading.tagName.toLowerCase() !== 'h1') {
+      const h1 = document.createElement('h1');
+      h1.innerHTML = heading.innerHTML;
+      heading = h1;
     }
   }
-  // Fallback: if missing, use the entire modal content
-  if (blockContent.length === 0 && content) {
-    blockContent = [content];
+
+  // Extract description (optional)
+  const desc = entryForm.querySelector('.priority-tool-entry-form__desc');
+
+  // Find button and convert to <p><a>...</a></p> (optional CTA)
+  let cta = null;
+  const btn = entryForm.querySelector('button[type="submit"]');
+  if (btn) {
+    const link = document.createElement('a');
+    link.textContent = btn.textContent.trim();
+    link.href = '#';
+    cta = document.createElement('p');
+    cta.appendChild(link);
   }
-  // Build table: header EXACTLY as specified, second row: one cell with all block content
+
+  // Compose all content into a single cell (img, heading, desc, cta)
+  const cellContent = [];
+  if (img) cellContent.push(img);
+  if (heading) cellContent.push(heading);
+  if (desc) cellContent.push(desc);
+  if (cta) cellContent.push(cta);
+
+  // Only create table if heading exists
+  if (!heading) return;
+
   const cells = [
     ['Hero (hero25)'],
-    [blockContent]
+    [cellContent]
   ];
-  const table = WebImporter.DOMUtils.createTable(cells, document);
-  element.replaceWith(table);
+  const block = WebImporter.DOMUtils.createTable(cells, document);
+  element.replaceWith(block);
 }

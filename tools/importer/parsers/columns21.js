@@ -1,30 +1,23 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  // Find the text-image-item inside the block (should be only one)
+  // Get the .text-image-item block (should only be one per block)
   const item = element.querySelector('.text-image-item');
   if (!item) return;
 
-  // Get the image element from the item (if any)
+  // Get the image (should be the first child)
   const img = item.querySelector('img');
-
-  // Get the content container (text side of the column)
+  // Get the content div (should contain the text)
   const content = item.querySelector('.text-image-item__content');
 
-  // Ensure fallback to empty div if content/image missing, to always create two columns in the data row
-  const col1 = content || document.createElement('div');
-  const col2 = img || document.createElement('div');
+  // Defensive: If both elements are missing, do nothing
+  if (!img && !content) return;
 
-  // Create header row with EXACTLY ONE COLUMN, as required
+  // Table header as in the block spec
   const headerRow = ['Columns (columns21)'];
-  // Create data row with two columns (content and image)
-  const dataRow = [col1, col2];
-
-  // Create the columns block table
-  const table = WebImporter.DOMUtils.createTable([
-    headerRow,    // one column only
-    dataRow       // two columns for the columns layout
-  ], document);
-
-  // Replace the original element with the new table block
+  // Build the columns: text (content) and image. If either is missing, cell will be empty.
+  const row = [content || '', img || ''];
+  
+  // Build and replace
+  const table = WebImporter.DOMUtils.createTable([headerRow, row], document);
   element.replaceWith(table);
 }

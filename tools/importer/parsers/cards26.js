@@ -1,34 +1,34 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  // Header row as per requirements
+  // 1. Table header EXACTLY matches example
   const headerRow = ['Cards (cards26)'];
 
-  // Get all card elements (direct children of .swiper-wrapper)
-  const swiperWrapper = element.querySelector(':scope > .swiper-wrapper');
-  if (!swiperWrapper) {
-    // If somehow no cards, just replace with the header table
-    const table = WebImporter.DOMUtils.createTable([headerRow], document);
-    element.replaceWith(table);
-    return;
+  // 2. Get all card elements
+  // Handles cases where structure could be slightly different
+  let cardEls;
+  // Try standard .swiper-wrapper > .teaser-item
+  cardEls = element.querySelectorAll(':scope > .swiper-wrapper > .teaser-item, :scope > .teaser-item');
+  // Fallback if there was no wrapper (robustness)
+  if (!cardEls.length) {
+    cardEls = element.querySelectorAll(':scope > div');
   }
 
-  const cards = swiperWrapper.querySelectorAll(':scope > .teaser-item');
-  const rows = Array.from(cards).map(card => {
-    // image in first cell
+  const rows = Array.from(cardEls).map(card => {
+    // Get image (first image inside the card, or empty string if missing)
     const img = card.querySelector('img');
-    // text content in second cell
-    // We'll reference the paragraph within .teaser-item__desc
-    let desc = card.querySelector('.teaser-item__desc');
-    // Fallback: if no desc, use .teaser-item__content or card itself
-    if (!desc) {
-      desc = card.querySelector('.teaser-item__content') || card;
+    const image = img || '';
+    // Get content: the .teaser-item__desc (contains a <p> normally), fallback to second div if needed
+    let textContent = card.querySelector('.teaser-item__desc');
+    if (!textContent) {
+      // fallback: get the second div inside card
+      const divs = card.querySelectorAll(':scope > div');
+      textContent = divs[1] || divs[0] || '';
     }
-    // For robustness: handle missing image or desc
-    return [img || document.createTextNode(''), desc || document.createTextNode('')];
+    return [image, textContent];
   });
-  const table = WebImporter.DOMUtils.createTable([
-    headerRow,
-    ...rows
-  ], document);
+
+  // Compose table
+  const tableArr = [headerRow, ...rows];
+  const table = WebImporter.DOMUtils.createTable(tableArr, document);
   element.replaceWith(table);
 }

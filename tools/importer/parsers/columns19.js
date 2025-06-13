@@ -1,22 +1,32 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  // Get all column wrappers
-  const cols = Array.from(element.querySelectorAll(':scope > .two-column-icon-item__col'));
+  // Find all column elements
+  let columns = Array.from(element.querySelectorAll(':scope > .two-column-icon-item__col'));
+  if (!columns.length) {
+    columns = Array.from(element.children).filter((c) => c.classList && c.classList.contains('two-column-icon-item__col'));
+  }
 
-  // For each col, extract its .icon-item content (reference the element directly for robust parsing)
-  const cells = cols.map(col => {
-    // Use the .icon-item directly if available, fall back to col
-    const iconItem = col.querySelector('.icon-item');
-    return iconItem || col;
+  // Prepare the table rows
+  // Header row: exactly one column as per requirements
+  const headerRow = ['Columns (columns19)'];
+
+  // Content row: as many columns as found in the DOM
+  const contentRow = columns.map((col) => {
+    // If multiple children, return as array, else single child or fallback to col
+    if (col.children.length === 1) {
+      return col.firstElementChild;
+    } else if (col.children.length > 1) {
+      return Array.from(col.children);
+    } else {
+      return col;
+    }
   });
 
-  // Compose table: header, then one row of columns
-  const tableArray = [
-    ['Columns (columns19)'],
-    cells
-  ];
+  // Build the table
+  const table = WebImporter.DOMUtils.createTable([
+    headerRow,
+    contentRow
+  ], document);
 
-  // Create and replace with table
-  const table = WebImporter.DOMUtils.createTable(tableArray, document);
   element.replaceWith(table);
 }

@@ -1,31 +1,41 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  // Table header row that matches the component/block name exactly
-  const headerRow = ['Columns (columns16)'];
+  // Find the main content and image wrappers
+  const wrapper = element.querySelector('.hero-banner-image-descr.wrapper');
+  if (!wrapper) return;
 
-  // Get the left/content column: .hero-banner-image-descr__content
-  const contentCol = element.querySelector('.hero-banner-image-descr__content');
-  // Defensive: if not found, use blank placeholder
-  const leftCell = contentCol || '';
-
-  // Get the right/image column: desktop image only (not mobile)
-  let rightCell = '';
-  const imageWrapper = element.querySelector('.hero-banner-image-descr__image-wrapper.desktop-image');
-  if (imageWrapper) {
-    const img = imageWrapper.querySelector('img');
-    if (img) rightCell = img;
+  // --- LEFT COLUMN: TEXT CONTENT ---
+  // Get the main content area (includes heading, p, list)
+  const content = wrapper.querySelector('.hero-banner-image-descr__content');
+  let leftCol = null;
+  if (content) {
+    // reference the DIV directly (contains all the text, p, list)
+    leftCol = content;
   }
 
-  // Second row as columns
-  const columnsRow = [leftCell, rightCell];
+  // --- RIGHT COLUMN: IMAGE ---
+  // Prefer desktop image, fallback to mobile
+  let rightCol = null;
+  let imgDiv = wrapper.querySelector('.hero-banner-image-descr__image-wrapper.desktop-image');
+  if (!imgDiv) {
+    imgDiv = wrapper.querySelector('.hero-banner-image-descr__image-wrapper.mobile-image');
+  }
+  if (imgDiv) {
+    const img = imgDiv.querySelector('img');
+    if (img) {
+      rightCol = img;
+    }
+  }
 
-  // Compose cells
-  const cells = [
-    headerRow,
-    columnsRow,
-  ];
+  // Table header must exactly match spec
+  const headerRow = ['Columns (columns16)'];
+  // Only include columns if they exist
+  const contentRow = [];
+  if (leftCol) contentRow.push(leftCol);
+  if (rightCol) contentRow.push(rightCol);
+  if (contentRow.length === 0) return; // Avoid creating empty block
 
-  // Create and replace
+  const cells = [headerRow, contentRow];
   const table = WebImporter.DOMUtils.createTable(cells, document);
   element.replaceWith(table);
 }

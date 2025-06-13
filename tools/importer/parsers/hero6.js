@@ -1,29 +1,45 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  // Find the hero section within the imported block
+  // Find the section containing the hero block
   const heroSection = element.querySelector('section.hero-banner-image');
   if (!heroSection) return;
 
-  // Find the headline (should be a heading)
-  const title = heroSection.querySelector('.hero-banner-image__title');
+  // Get the hero image (decorative background image)
+  const heroImg = heroSection.querySelector('img.hero-banner-image__img');
 
-  // Find the description (optional)
-  const desc = heroSection.querySelector('.hero-banner-image__desc');
+  // Get the text container (title, subheading, cta)
+  const textContainer = heroSection.querySelector('.hero-banner-image__text');
+  const cellsContent = [];
 
-  // Find the visual image (background image and <img>, but use the <img> for accessibility)
-  const img = heroSection.querySelector('img.hero-banner-image__img');
+  // Include the decorative image if present
+  if (heroImg) {
+    cellsContent.push(heroImg);
+  }
 
-  // Compose the content cell: order is [img, title, desc]
-  const content = [];
-  if (img) content.push(img);
-  if (title) content.push(title);
-  if (desc) content.push(desc);
+  // Title (mandatory)
+  if (textContainer) {
+    const title = textContainer.querySelector('.hero-banner-image__title');
+    if (title) {
+      cellsContent.push(title);
+    }
+    // Subheading/desc (optional)
+    const desc = textContainer.querySelector('.hero-banner-image__desc');
+    if (desc) {
+      // If desc is a <div> containing a <p>, include the <p> not the <div>
+      const descP = desc.querySelector('p');
+      if (descP) {
+        cellsContent.push(descP);
+      } else {
+        cellsContent.push(desc);
+      }
+    }
+  }
 
-  // Compose the hero block table
-  const table = WebImporter.DOMUtils.createTable([
+  // Compose the table as specified
+  const cells = [
     ['Hero (hero6)'],
-    [content]
-  ], document);
-
-  element.replaceWith(table);
+    [cellsContent]
+  ];
+  const block = WebImporter.DOMUtils.createTable(cells, document);
+  element.replaceWith(block);
 }

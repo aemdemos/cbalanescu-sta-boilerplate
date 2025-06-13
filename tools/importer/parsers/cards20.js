@@ -1,43 +1,39 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  // Cards header as per requirements
+  // Cards (cards20) block: 2 columns - image/icon, and text content (with heading/desc)
   const headerRow = ['Cards (cards20)'];
 
-  // Find the block containing card items
-  const iconsBlock = element.querySelector('.icons-block-item');
+  // Find the programme card block (the right column, cards list)
+  const iconsBlock = element.querySelector('.icons-block-item__icons');
   if (!iconsBlock) return;
-  const cardItems = iconsBlock.querySelectorAll('.icon-item');
 
-  const rows = [headerRow];
+  // Find all card elements
+  const cardElements = Array.from(iconsBlock.children).filter(e => e.classList.contains('icon-item'));
 
-  cardItems.forEach((card) => {
-    // The image/icon on the left
+  // Build card rows
+  const rows = cardElements.map(card => {
+    // First cell: icon image (reference existing img node)
     const img = card.querySelector('img');
-    // The text cell on the right
-    const title = card.querySelector('h5');
-    const content = card.querySelector('.icon-item__content');
 
-    // For the text cell, we create a fragment to preserve all semantics
-    const fragment = document.createDocumentFragment();
-    if (title) {
-      // Use <strong> as in the example, and add line break after
-      const strong = document.createElement('strong');
-      strong.textContent = title.textContent;
-      fragment.appendChild(strong);
-      fragment.appendChild(document.createElement('br'));
-    }
+    // Second cell: text content: h5 (title) + paragraphs (description)
+    // Use a DocumentFragment to gather the heading and all text block children
+    const frag = document.createDocumentFragment();
+    const title = card.querySelector('h5');
+    if (title) frag.appendChild(title);
+    const content = card.querySelector('.icon-item__content');
     if (content) {
-      Array.from(content.childNodes).forEach((node) => {
-        // Directly append the existing node (do not clone)
-        fragment.appendChild(node);
+      // Preserve all content (paragraphs, superscripts, etc)
+      content.childNodes.forEach(node => {
+        frag.appendChild(node);
       });
     }
-
-    // Add row: [image, text cell fragment]
-    rows.push([img, fragment]);
+    return [img, frag];
   });
 
-  // Create table and replace
-  const table = WebImporter.DOMUtils.createTable(rows, document);
+  // Only proceed if there are cards
+  if (rows.length === 0) return;
+
+  // Compose the table for the block
+  const table = WebImporter.DOMUtils.createTable([headerRow, ...rows], document);
   element.replaceWith(table);
 }

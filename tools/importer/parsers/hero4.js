@@ -1,36 +1,30 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  // Header row for block
-  const headerRow = ['Hero (hero4)'];
+  // Find the section inside the container
+  const section = element.querySelector('section.hero-banner-image');
+  if (!section) return;
 
-  // Get the <section> with class 'hero-banner-image'
-  const heroSection = element.querySelector('section.hero-banner-image');
+  // Find the hero image (visible img tag)
+  const img = section.querySelector('img.hero-banner-image__img');
 
-  // Defensive check in case structure varies
-  let img = null;
-  let title = null;
-  if (heroSection) {
-    img = heroSection.querySelector('img.hero-banner-image__img');
-    title = heroSection.querySelector('.hero-banner-image__title');
-  } else {
-    img = element.querySelector('img.hero-banner-image__img');
-    title = element.querySelector('.hero-banner-image__title');
-  }
+  // Find the hero text and heading
+  const heading = section.querySelector('.hero-banner-image__text h1, .hero-banner-image__text h2, .hero-banner-image__text h3, .hero-banner-image__text h4, .hero-banner-image__text h5, .hero-banner-image__text h6');
 
-  const content = [];
-  if (img) content.push(img);
-  if (title) content.push(title);
+  // Compose the cell content: image and heading if available
+  const cellContent = [];
+  if (img) cellContent.push(img);
+  if (heading) cellContent.push(heading);
 
-  // Prevent empty blocks if content is missing
-  if (content.length === 0) {
-    // fallback: place all element's children in the cell
-    content.push(...element.children);
-  }
+  // If there is no heading and no image, don't replace
+  if (cellContent.length === 0) return;
 
-  const table = WebImporter.DOMUtils.createTable([
-    headerRow,
-    [content],
-  ], document);
+  // Table structure: header then cell content
+  const cells = [
+    ['Hero (hero4)'],
+    [cellContent]
+  ];
+
+  const table = WebImporter.DOMUtils.createTable(cells, document);
 
   element.replaceWith(table);
 }

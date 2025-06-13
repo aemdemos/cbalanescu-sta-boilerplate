@@ -1,32 +1,69 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  // --- Critical Review Points ---
-  // - No hardcoded content: all content is taken from the input element.
-  // - No markdown/strings for content: all content referenced as existing elements.
-  // - Only one block table per example; no Section Metadata in the example.
-  // - Table header must be: 'Columns (columns2)'.
-  // - Both columns must be referenced as existing elements.
-  // - Must gracefully handle if left or right column is missing.
+  // Find the main columns in the block
+  // There should be two: one for video (left), one for content/cta (right)
+  const divs = Array.from(element.querySelectorAll(':scope > div'));
 
-  // Find left column: video+transcript
-  const videoWrapper = element.querySelector('.hero-banner-video__video-wrapper');
-  const transcript = element.querySelector('.hero-banner-video__transcript');
-  const leftCol = document.createElement('div');
-  if (videoWrapper) leftCol.appendChild(videoWrapper);
-  if (transcript) leftCol.appendChild(transcript);
-  // If both are missing, leftCol should be empty but defined
+  // The main left column is the one with class 'hero-banner-video with-icon'
+  // The right column is the one with class 'hero-banner-video__text'
+  const leftCol = divs.find(d => d.classList.contains('hero-banner-video'));
+  const rightCol = divs.find(d => d.classList.contains('hero-banner-video__text'));
 
-  // Find right column: title/content/cta
-  const rightCol = element.querySelector('.hero-banner-video__text');
-  // If missing, pass empty div
-  const rightCell = rightCol ? rightCol : document.createElement('div');
+  // Defensive: either column may be missing, if so, use empty placeholder
+  // Build left cell contents
+  let leftCell;
+  if (leftCol) {
+    const leftFragment = document.createElement('div');
+    // Grab icon/title
+    const titleWrapper = leftCol.querySelector('.hero-banner-video__title-wrapper');
+    if (titleWrapper) leftFragment.appendChild(titleWrapper);
+    // Handle video: replace <video> (or any non-image element with src) with link
+    let videoEmbed = leftCol.querySelector('.video-embed-field-provider-brightcove');
+    if (videoEmbed) {
+      // Clone the videoEmbed so we can replace video tags with links safely
+      videoEmbed = videoEmbed.cloneNode(true);
+      // Find all elements with src that are not <img>
+      videoEmbed.querySelectorAll('[src]:not(img)').forEach(el => {
+        const src = el.getAttribute('src');
+        if (src) {
+          // Create a link element
+          const a = document.createElement('a');
+          a.href = src;
+          a.textContent = src;
+          el.replaceWith(a);
+        }
+      });
+      leftFragment.appendChild(videoEmbed);
+    }
+    // Grab transcript (optional)
+    const transcript = leftCol.querySelector('.hero-banner-video__transcript');
+    if (transcript) leftFragment.appendChild(transcript);
+    leftCell = leftFragment.childNodes.length > 0 ? leftFragment : document.createTextNode('');
+  } else {
+    leftCell = document.createTextNode('');
+  }
 
-  // Table header
-  const headerRow = ['Columns (columns2)'];
-  // Second row, two columns
-  const secondRow = [leftCol, rightCell];
+  // Build right cell contents
+  let rightCell;
+  if (rightCol) {
+    const rightFragment = document.createElement('div');
+    const rightTitleWrapper = rightCol.querySelector('.hero-banner-video__title-wrapper');
+    if (rightTitleWrapper) rightFragment.appendChild(rightTitleWrapper);
+    const rightContent = rightCol.querySelector('.hero-banner-video__content');
+    if (rightContent) rightFragment.appendChild(rightContent);
+    const cta = rightCol.querySelector('.hero-banner-video__cta');
+    if (cta) rightFragment.appendChild(cta);
+    rightCell = rightFragment.childNodes.length > 0 ? rightFragment : document.createTextNode('');
+  } else {
+    rightCell = document.createTextNode('');
+  }
 
-  const table = WebImporter.DOMUtils.createTable([headerRow, secondRow], document);
+  // Create the table structure for Columns (columns2)
+  const cells = [
+    ['Columns (columns2)'],
+    [leftCell, rightCell]
+  ];
 
+  const table = WebImporter.DOMUtils.createTable(cells, document);
   element.replaceWith(table);
 }

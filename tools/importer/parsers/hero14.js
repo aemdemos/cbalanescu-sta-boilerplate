@@ -1,37 +1,69 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  // Table header as in the example
-  const headerRow = ['Hero (hero14)'];
+  // Get the main title (h4)
+  const title = element.querySelector('h4');
 
-  // Gather content in correct order
-  const content = [];
+  let heading = null;
+  if (title) {
+    // Always create a new h1, move over the content and className
+    heading = document.createElement('h1');
+    heading.innerHTML = title.innerHTML;
+    heading.className = title.className;
+  }
 
-  // Title (mandatory)
-  const title = element.querySelector('.text-with-bg__title');
-  if (title) content.push(title);
+  // Get .text-with-bg block
+  const heroBlock = element.querySelector('.text-with-bg');
 
-  // Logo (optional, placed after title in screenshot)
-  const logo = element.querySelector('.text-with-bg__logo');
-  if (logo) content.push(logo);
+  // Find the desktop background style
+  let bgUrl = null;
+  if (heroBlock) {
+    const bgDiv = heroBlock.querySelector('.text-with-bg__bg:not(.mobile)');
+    if (bgDiv && bgDiv.style.backgroundImage) {
+      // background-image: url('/path/to/img');
+      const match = bgDiv.style.backgroundImage.match(/url\(["']?(.*?)["']?\)/);
+      if (match && match[1]) {
+        bgUrl = match[1];
+      }
+    }
+  }
 
-  // Description (optional)
-  const desc = element.querySelector('.text-with-bg__desc');
-  if (desc) content.push(desc);
+  // If background image, create an <img> element
+  let bgImgEl = null;
+  if (bgUrl) {
+    bgImgEl = document.createElement('img');
+    bgImgEl.src = bgUrl;
+    bgImgEl.alt = '';
+  }
 
-  // CTA (optional)
-  const cta = element.querySelector('.button');
-  if (cta) content.push(cta);
+  // Get the logo img if present (reference existing element)
+  let logoImg = heroBlock ? heroBlock.querySelector('img.text-with-bg__logo') : null;
 
-  // Only add non-empty content
-  const cellContent = content.length ? content : [''];
+  // Get the main content (description paragraphs)
+  let descBlock = null;
+  if (heroBlock) {
+    const descDiv = heroBlock.querySelector('.text-with-bg__desc');
+    if (descDiv) {
+      descBlock = descDiv; // Reference existing element
+    }
+  }
 
-  // Table structure: 1 column, 2 rows
+  // Get the call-to-action button (reference existing element)
+  let cta = heroBlock ? heroBlock.querySelector('a.button') : null;
+
+  // Assemble the cell content in order: bgImg, logo, heading, description, cta
+  // Only include an element if it exists
+  const cellContent = [];
+  if (bgImgEl) cellContent.push(bgImgEl);
+  if (logoImg) cellContent.push(logoImg);
+  if (heading) cellContent.push(heading);
+  if (descBlock) cellContent.push(descBlock);
+  if (cta) cellContent.push(cta);
+
   const cells = [
-    headerRow,
-    [cellContent],
+    ['Hero (hero14)'],
+    [cellContent]
   ];
 
-  // Create table block
-  const block = WebImporter.DOMUtils.createTable(cells, document);
-  element.replaceWith(block);
+  const table = WebImporter.DOMUtils.createTable(cells, document);
+  element.replaceWith(table);
 }

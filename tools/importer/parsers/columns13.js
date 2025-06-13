@@ -1,30 +1,27 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  // Find the main wrapper containing the columns
+  // Find the main block wrapper inside the section
   const wrapper = element.querySelector('.hero-banner-image-descr.wrapper');
   if (!wrapper) return;
 
-  // Left column: text content (reference the direct child of .hero-banner-image-descr__content)
-  let leftCell = '';
+  // Get the content/text and image wrappers as direct children
   const content = wrapper.querySelector('.hero-banner-image-descr__content');
-  if (content) {
-    // Prefer .hero-banner-image-descr__text if present
-    const text = content.querySelector('.hero-banner-image-descr__text');
-    leftCell = text || content;
-  }
-
-  // Right column: image (reference the img element directly)
-  let rightCell = '';
   const imageWrapper = wrapper.querySelector('.hero-banner-image-descr__image-wrapper');
-  if (imageWrapper) {
-    const img = imageWrapper.querySelector('img');
-    if (img) rightCell = img;
-  }
 
-  const cells = [
-    ['Columns (columns13)'],
-    [leftCell, rightCell]
-  ];
-  const table = WebImporter.DOMUtils.createTable(cells, document);
+  // Defensive: Only proceed if both content and image exist
+  if (!content || !imageWrapper) return;
+
+  // Table header matches the block naming convention
+  const headerRow = ['Columns (columns13)'];
+  // Each cell is an existing element (no cloning)
+  const row = [content, imageWrapper];
+
+  // Build the table as per the block spec
+  const table = WebImporter.DOMUtils.createTable([
+    headerRow,
+    row,
+  ], document);
+
+  // Replace the original element
   element.replaceWith(table);
 }

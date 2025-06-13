@@ -2,18 +2,14 @@
 export default function parse(element, { document }) {
   const headerRow = ['Cards (cards18)'];
   const rows = [headerRow];
-
-  // Each card is a '.teaser-icon-item'
+  // Get all card elements
   const cardEls = element.querySelectorAll(':scope > .teaser-icon-item');
   cardEls.forEach(card => {
-    // Image/Icon (first cell)
-    const img = card.querySelector('img.teaser-icon-item__icon');
-    // Use the actual image element from the document (do not clone)
-    let imgCell = img;
-
-    // Text content (second cell)
+    // First cell: the icon/image element
+    const img = card.querySelector('.teaser-icon-item__icon');
+    // Second cell: wrapper for title, description, and CTA
     const cellContent = [];
-    // Title (strong)
+    // Title
     const title = card.querySelector('.teaser-icon-item__title');
     if (title) {
       const strong = document.createElement('strong');
@@ -24,27 +20,21 @@ export default function parse(element, { document }) {
     // Description
     const desc = card.querySelector('.teaser-icon-item__desc');
     if (desc) {
-      // Preserve all children (could be <p> or text nodes)
-      Array.from(desc.childNodes).forEach(node => {
+      desc.childNodes.forEach(node => {
         cellContent.push(node);
       });
     }
-    // CTA button (as a span, since it opens a popup, not a URL)
-    const ctaBtn = card.querySelector('.teaser-icon-item__cta .button');
-    if (ctaBtn) {
+    // CTA Button (as link, not span)
+    const ctaBtn = card.querySelector('.teaser-icon-item__cta .cta-link');
+    if (ctaBtn && ctaBtn.textContent.trim()) {
       cellContent.push(document.createElement('br'));
-      const span = document.createElement('span');
-      span.textContent = ctaBtn.textContent.trim();
-      span.className = 'cta';
-      cellContent.push(span);
+      const ctaLink = document.createElement('a');
+      ctaLink.textContent = ctaBtn.textContent.trim();
+      ctaLink.href = '#';
+      cellContent.push(ctaLink);
     }
-    
-    rows.push([
-      imgCell,
-      cellContent
-    ]);
+    rows.push([img, cellContent]);
   });
-
   const table = WebImporter.DOMUtils.createTable(rows, document);
   element.replaceWith(table);
 }

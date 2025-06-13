@@ -1,29 +1,23 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  // Header row as in example
-  const headerRow = ['Hero (hero8)'];
-
-  // Get the image and the heading inside the main element
+  // Get the image and the title elements (not cloning, using references)
   const img = element.querySelector('img');
-  const heading = element.querySelector('h5');
+  const title = element.querySelector('h5');
 
-  // Prepare content for the content row
-  const content = document.createElement('div');
-  if (img) content.appendChild(img);
-  if (heading) {
-    // Use the existing h5 as the heading; do not change its level
-    content.appendChild(heading);
-  }
+  // Use the title as a heading. If it's not present, leave undefined
+  // Reference the existing h5 element (do not create new one) for semantic preservation
+  // Compose the cell contents
+  let heroContent = [];
+  if (img) heroContent.push(img);
+  if (title) heroContent.push(title);
+  if (!img && !title) heroContent = '';
 
-  // Only add content row if either img or heading exists
-  const contentRow = [content.childNodes.length > 0 ? [content] : ['']];
+  // Build cells as per block structure
+  const cells = [
+    ['Hero (hero8)'],
+    [heroContent.length > 1 ? heroContent : heroContent[0] || '']
+  ];
 
-  // Assemble cells
-  const cells = [headerRow, ...contentRow];
-
-  // Create the block table
-  const table = WebImporter.DOMUtils.createTable(cells, document);
-
-  // Replace the original element with the table
-  element.replaceWith(table);
+  const block = WebImporter.DOMUtils.createTable(cells, document);
+  element.replaceWith(block);
 }

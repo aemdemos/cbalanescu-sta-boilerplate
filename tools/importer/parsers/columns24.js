@@ -1,91 +1,35 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  // Header row
+  // Find the hero banner (top-level content block)
+  const heroBanner = element.querySelector('.hero-banner-video');
+  if (!heroBanner) {
+    // fallback: use the element itself if structure is missing
+    return;
+  }
+
+  // Get the left column: text content
+  const textCol = heroBanner.querySelector('.hero-banner-video__text');
+  // Get the right column: video content
+  const videoCol = heroBanner.querySelector('.hero-banner-video__video-wrapper');
+
+  // Prepare the header row, matching the example: Columns (columns24)
   const headerRow = ['Columns (columns24)'];
+  // Second row: two columns
+  const contentRow = [textCol, videoCol];
+  const cells = [headerRow, contentRow];
 
-  // Try to locate the hero area with two columns
-  const hero = element.querySelector('.hero-banner-video');
-
-  let leftCol = null;
-  let rightCol = null;
-
-  if (hero) {
-    leftCol = hero.querySelector('.hero-banner-video__text');
-    rightCol = hero.querySelector('.hero-banner-video__video-wrapper');
-    // Add transcript (if present) to rightCol
-    const transcript = element.querySelector('.hero-banner-video__transcript');
-    if (rightCol && transcript) {
-      rightCol.appendChild(transcript);
-    }
-    // Fix: convert non-image src elements in rightCol to links
-    if (rightCol) {
-      // Convert videos with src
-      const videos = Array.from(rightCol.querySelectorAll('video[src]'));
-      videos.forEach((vid) => {
-        // Only convert if src exists and is non-empty
-        const src = vid.getAttribute('src');
-        if (src && src !== '' && vid.tagName.toLowerCase() !== 'img') {
-          const link = document.createElement('a');
-          link.href = src;
-          link.textContent = src;
-          vid.replaceWith(link);
-        }
-      });
-      // Convert iframes with src
-      const iframes = Array.from(rightCol.querySelectorAll('iframe[src]'));
-      iframes.forEach((iframe) => {
-        const src = iframe.getAttribute('src');
-        if (src && src !== '') {
-          const link = document.createElement('a');
-          link.href = src;
-          link.textContent = src;
-          iframe.replaceWith(link);
-        }
-      });
-    }
+  // Handle transcript: if present, add an extra row spanning both columns
+  const transcriptCol = heroBanner.querySelector('.hero-banner-video__transcript');
+  if (transcriptCol) {
+    // To span both columns, we'll set the row as a single cell (the table renderer will handle colspan)
+    const transcriptWrapper = document.createElement('div');
+    transcriptWrapper.appendChild(transcriptCol);
+    cells.push([transcriptWrapper]);
   }
 
-  // Fallback: use first two divs inside the element
-  if (!leftCol || !rightCol) {
-    const children = Array.from(element.querySelectorAll(':scope > div'));
-    leftCol = leftCol || children[0];
-    rightCol = rightCol || children[1];
-    // Fix: convert non-image src elements in rightCol to links (fallback)
-    if (rightCol) {
-      const videos = Array.from(rightCol.querySelectorAll('video[src]'));
-      videos.forEach((vid) => {
-        const src = vid.getAttribute('src');
-        if (src && src !== '' && vid.tagName.toLowerCase() !== 'img') {
-          const link = document.createElement('a');
-          link.href = src;
-          link.textContent = src;
-          vid.replaceWith(link);
-        }
-      });
-      const iframes = Array.from(rightCol.querySelectorAll('iframe[src]'));
-      iframes.forEach((iframe) => {
-        const src = iframe.getAttribute('src');
-        if (src && src !== '') {
-          const link = document.createElement('a');
-          link.href = src;
-          link.textContent = src;
-          iframe.replaceWith(link);
-        }
-      });
-    }
-  }
-  if (!leftCol) {
-    leftCol = document.createElement('div');
-  }
-  if (!rightCol) {
-    rightCol = document.createElement('div');
-  }
+  // Create the block table
+  const table = WebImporter.DOMUtils.createTable(cells, document);
 
-  const columnsRow = [leftCol, rightCol];
-  const table = WebImporter.DOMUtils.createTable([
-    headerRow,
-    columnsRow
-  ], document);
-
+  // Replace the original element with the new table
   element.replaceWith(table);
 }

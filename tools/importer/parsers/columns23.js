@@ -1,41 +1,24 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  // Get the main container
+  // Find the two column containers
   const container = element.querySelector(':scope > .container');
-  if (!container) return;
-
-  // Get left column: content area
-  const leftCol = container.querySelector(':scope > .hero-banner-image-descr__content');
-  // Get right column: image area
-  const rightCol = container.querySelector(':scope > .hero-banner-image-descr__image-wrapper');
-
-  // Prepare left column content array
-  const leftColParts = [];
-  if (leftCol) {
-    // Title (h3)
-    const title = leftCol.querySelector('.hero-banner-image-descr__title');
-    if (title) leftColParts.push(title);
-    // Description (text block)
-    const descr = leftCol.querySelector('.hero-banner-image-descr__text');
-    if (descr) leftColParts.push(descr);
-    // Download link (button)
-    const btn = leftCol.querySelector('a.button, a.cta-download-link');
-    if (btn) leftColParts.push(btn);
+  let leftCol = [], rightCol = [];
+  if (container) {
+    const contentDiv = container.querySelector('.hero-banner-image-descr__content');
+    if (contentDiv) {
+      leftCol = Array.from(contentDiv.children);
+    }
+    const imageWrapper = container.querySelector('.hero-banner-image-descr__image-wrapper');
+    if (imageWrapper) {
+      const img = imageWrapper.querySelector('img');
+      if (img) rightCol.push(img);
+    }
   }
-
-  // Prepare right column content
-  let rightColContent = null;
-  if (rightCol) {
-    const img = rightCol.querySelector('img');
-    if (img) rightColContent = img;
-  }
-
-  // Header row must match example exactly
+  // Table structure: 1 header cell with exact text, 1 row with 2 columns
   const cells = [
-    ['Columns block'],
-    [leftColParts, rightColContent || '']
+    ['Columns (columns23)'],
+    [leftCol, rightCol],
   ];
-
-  const block = WebImporter.DOMUtils.createTable(cells, document);
-  element.replaceWith(block);
+  const table = WebImporter.DOMUtils.createTable(cells, document);
+  element.replaceWith(table);
 }
