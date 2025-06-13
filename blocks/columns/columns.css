@@ -42,7 +42,7 @@
 
 .columns.columns11 h4 {
   color: #32343A;
-  font-family: Montserrat, 'Open Sans', Arial, sans-serif;
+  font-family: Montserrat, Open Sans, Arial, sans-serif;
   font-size: 24px;
   font-weight: 700;
   margin: 0;
@@ -50,89 +50,6 @@
   line-height: 1.05;
   text-align: center;
   letter-spacing: 0;
-}
-
-.columns.columns7 .columns-img-col picture {
-  background: none;
-  padding: 0;
-  border: none;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: auto;
-  min-height: 0;
-  height: auto;
-}
-
-.columns.columns7 .columns-img-col img {
-  border: 2px solid #b6d236;
-  border-radius: 4px;
-  display: block;
-  margin: 0;
-  background: #fff;
-  max-width: 322px;
-  width: 322px;
-  height: auto;
-  box-sizing: border-box;
-}
-
-.columns.columns2 > div > div:first-child picture,
-.columns.columns2 > div > div:first-child img {
-  display: block;
-  width: 100%;
-  max-width: 400px;
-  max-height: 248px;
-  margin: 0 0 18px;
-  object-fit: contain;
-  border-radius: 22px;
-  background: none;
-  box-shadow: 0 1px 8px 0 rgb(0 0 0 / 6%);
-}
-
-.columns.columns2 > div > div:first-child p {
-  color: #065adc;
-  text-decoration: underline;
-  cursor: pointer;
-  font-size: 1rem;
-  margin: 8px 0 0;
-  padding: 0;
-  align-self: flex-start;
-}
-
-.columns.columns2 > div > div:first-child p:nth-child(3) {
-  margin: 0 0 0.5em;
-}
-
-.columns.columns2 > div > div:first-child {
-  flex: 0 1 420px;
-  max-width: 420px;
-  min-width: 240px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
-  min-height: 1px;
-  padding: 0;
-  background: none;
-  border-radius: 0;
-}
-
-.columns.columns7 > div > div:first-child {
-  max-width: 746px;
-  flex: 0 1 746px;
-  font-size: 18px;
-  line-height: 28.1px;
-  color: #434343;
-  font-family: var(--body-font-family);
-  padding: 0;
-  box-sizing: border-box;
-}
-
-.columns.columns7 > div > div:first-child p {
-  font-size: 18px;
-  line-height: 28.1px;
-  color: #434343;
-  margin-bottom: 20px;
 }
 
 .columns.columns11 > div {
@@ -177,49 +94,60 @@
   box-sizing: content-box;
 }
 
-.columns.columns7 .columns-img-col p {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 12px;
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  background: none;
-}
-
-.columns.columns2 > div > div:last-child p,
-.columns.columns2 > div > div:last-child > p {
-  margin: 0 0 18px;
-  font-size: 1.13rem;
-  color: #222;
-  line-height: 1.6;
-  font-family: var(--body-font-family);
-  text-align: left;
-  padding: 0;
-}
-
-.columns.columns7 > div > .columns-img-col {
-  max-width: 340px;
-  flex: 0 1 340px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  padding: 0;
-  background: none;
+.columns.columns2 {
+  margin: 0 auto;
+  background: #fff;
+  padding: 40px 0;
   box-sizing: border-box;
 }
 
-.columns.columns7 > div > .columns-img-col > h1,
-.columns.columns7 > div > .columns-img-col > h2,
-.columns.columns7 > div > .columns-img-col > h3,
-.columns.columns7 > div > .columns-img-col > h4,
-.columns.columns7 > div > .columns-img-col > h5,
-.columns.columns7 > div > .columns-img-col > h6,
-.columns.columns7 > div > .columns-img-col > span {
-  display: none;
+.columns.columns2 > div {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 32px;
+  max-width: 100%;
+  padding: 0 12px;
+}
+
+.columns.columns2 > div > div:first-child {
+  flex: 0 1 420px;
+  max-width: 420px;
+  min-width: 240px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  min-height: 1px;
+  padding: 0;
+  background: none;
+  border-radius: 0;
+}
+
+.columns.columns2 > div > div:first-child picture,
+.columns.columns2 > div > div:first-child img {
+  display: block;
+  width: 100%;
+  max-width: 400px;
+  max-height: 248px;
+  margin: 0 0 18px;
+  object-fit: contain;
+  border-radius: 22px;
+  background: none;
+  box-shadow: 0 1px 8px 0 rgb(0 0 0 / 6%);
+}
+
+.columns.columns2 > div > div:first-child p {
+  color: #065adc;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 1rem;
+  margin: 8px 0 0;
+  padding: 0;
+  align-self: flex-start;
+}
+
+.columns.columns2 > div > div:first-child p:nth-child(3) {
+  margin: 0 0 0.5em;
 }
 
 .columns.columns2 > div > div:first-child p:not(:nth-child(2), :nth-child(3)) {
@@ -229,13 +157,6 @@
 .columns.columns2 > div > div:first-child ul,
 .columns.columns2 > div > div:first-child ol {
   display: none;
-}
-
-.columns.columns2 {
-  margin: 0 auto;
-  background: #fff;
-  padding: 40px 0;
-  box-sizing: border-box;
 }
 
 .columns.columns2 > div > div:last-child {
@@ -295,7 +216,7 @@
   width: 46px;
   height: 46px;
   border-radius: 50%;
-  background: url('https://i.imgur.com/j6Q0aFJ.png') no-repeat center/cover, #fff;
+  background: url(https://i.imgur.com/j6Q0aFJ.png) no-repeat center/cover, #fff;
   border: 3px solid #00a74f;
   margin-right: 0;
   vertical-align: top;
@@ -343,6 +264,93 @@
   background: #005bb8;
 }
 
+.columns.columns2 > div > div:last-child p,
+.columns.columns2 > div > div:last-child > p {
+  margin: 0 0 18px;
+  font-size: 1.13rem;
+  color: #222;
+  line-height: 1.6;
+  font-family: var(--body-font-family);
+  text-align: left;
+  padding: 0;
+}
+
+.columns.columns7 > div > div:first-child {
+  max-width: 746px;
+  flex: 0 1 746px;
+  font-size: 18px;
+  line-height: 28.1px;
+  color: #434343;
+  font-family: var(--body-font-family);
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.columns.columns7 > div > div:first-child p {
+  font-size: 18px;
+  line-height: 28.1px;
+  color: #434343;
+  margin-bottom: 20px;
+}
+
+.columns.columns7 > div > .columns-img-col {
+  max-width: 340px;
+  flex: 0 1 340px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0;
+  background: none;
+  box-sizing: border-box;
+}
+
+.columns.columns7 > div > .columns-img-col > h1,
+.columns.columns7 > div > .columns-img-col > h2,
+.columns.columns7 > div > .columns-img-col > h3,
+.columns.columns7 > div > .columns-img-col > h4,
+.columns.columns7 > div > .columns-img-col > h5,
+.columns.columns7 > div > .columns-img-col > h6,
+.columns.columns7 > div > .columns-img-col > span {
+  display: none;
+}
+
+.columns.columns7 .columns-img-col picture {
+  background: none;
+  padding: 0;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: auto;
+  min-height: 0;
+  height: auto;
+}
+
+.columns.columns7 .columns-img-col img {
+  border: 2px solid #b6d236;
+  border-radius: 4px;
+  display: block;
+  margin: 0;
+  background: #fff;
+  max-width: 322px;
+  width: 322px;
+  height: auto;
+  box-sizing: border-box;
+}
+
+.columns.columns7 .columns-img-col p {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  background: none;
+}
+
 .section .columns.columns2 {
   margin-top: 0;
   margin-bottom: 0;
@@ -357,7 +365,6 @@
     max-width: 100%;
     padding: 0 16px;
   }
-
   .columns.columns2 > div > div:last-child,
   .columns.columns2 > div > div:first-child {
     max-width: 100%;
@@ -366,7 +373,6 @@
     min-height: 0;
     padding-top: 0;
   }
-
   .columns.columns2 > div > div:last-child .button {
     width: 100%;
     font-size: 1rem;
@@ -378,7 +384,6 @@
     max-width: 95vw;
     padding: 0 8px;
   }
-
   .columns.columns11 > div {
     flex-direction: column;
     gap: 32px;
@@ -388,12 +393,10 @@
     justify-content: center;
     align-items: center;
   }
-
   .columns.columns11 > div > div {
     width: 100%;
     max-width: 100%;
   }
-
   .columns.columns2 > div {
     flex-direction: column;
     align-items: stretch;
@@ -401,7 +404,6 @@
     max-width: 100%;
     padding: 0 12px;
   }
-
   .columns.columns2 > div > div:last-child,
   .columns.columns2 > div > div:first-child {
     max-width: 100%;
@@ -410,7 +412,6 @@
     min-height: 0;
     padding-top: 0;
   }
-
   .columns.columns2 > div > div:last-child a.button,
   .columns.columns2 > div > div:last-child button,
   .columns.columns2 > div > div:last-child .button {
@@ -419,30 +420,25 @@
     padding: 16px 0;
     align-self: stretch;
   }
-
   .columns.columns2 > div > div:first-child picture,
   .columns.columns2 > div > div:first-child img {
     max-width: 100%;
     margin: 0 0 14px;
   }
-
   .columns.columns7 > div {
     flex-direction: column;
     gap: 32px;
   }
-
   .columns.columns7 > div > div:first-child,
   .columns.columns7 > div > .columns-img-col {
     max-width: 100%;
     flex-basis: 100%;
     width: 100%;
   }
-
   .columns.columns7 .columns-img-col img {
     max-width: 90vw;
     width: 90vw;
   }
-
   .columns.columns7 .columns-img-col a,
   .columns.columns7 .columns-img-col p > a {
     max-width: 90vw;
@@ -455,7 +451,6 @@
     flex-direction: unset;
     gap: 24px;
   }
-
   .columns > div > div {
     flex: 1;
     order: unset;
@@ -506,4 +501,15 @@
   display: flex;
   flex-direction: row;
   justify-content: center;
+}
+
+/* ========== GENERATED CSS ========== */
+.columns.columns24 {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  width: 100%;
+  background: #fff;
+  margin: 0 auto;
+  box-sizing: border-box;
 }
