@@ -1,30 +1,37 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  // Find the main wrapper containing the columns
-  const wrapper = element.querySelector('.hero-banner-image-descr.wrapper');
+  // Defensive: find the hero-banner-image-descr wrapper
+  const wrapper = element.querySelector('.hero-banner-image-descr');
   if (!wrapper) return;
 
-  // Left column: text content (reference the direct child of .hero-banner-image-descr__content)
-  let leftCell = '';
+  // Left column: text block
+  let textCell = null;
   const content = wrapper.querySelector('.hero-banner-image-descr__content');
   if (content) {
-    // Prefer .hero-banner-image-descr__text if present
-    const text = content.querySelector('.hero-banner-image-descr__text');
-    leftCell = text || content;
+    // Use the content div, which contains the text container
+    textCell = content;
+  } else {
+    // fallback: just use whatever text block can be found
+    textCell = wrapper.querySelector('.hero-banner-image-descr__text') || document.createElement('div');
   }
 
-  // Right column: image (reference the img element directly)
-  let rightCell = '';
+  // Right column: image block
+  let imageCell = null;
   const imageWrapper = wrapper.querySelector('.hero-banner-image-descr__image-wrapper');
   if (imageWrapper) {
-    const img = imageWrapper.querySelector('img');
-    if (img) rightCell = img;
+    imageCell = imageWrapper;
+  } else {
+    // fallback: just the image
+    imageCell = wrapper.querySelector('img') || document.createElement('div');
   }
 
-  const cells = [
-    ['Columns (columns13)'],
-    [leftCell, rightCell]
-  ];
-  const table = WebImporter.DOMUtils.createTable(cells, document);
+  const headerRow = ['Columns (columns13)'];
+  const contentRow = [textCell, imageCell];
+
+  const table = WebImporter.DOMUtils.createTable([
+    headerRow,
+    contentRow
+  ], document);
+
   element.replaceWith(table);
 }

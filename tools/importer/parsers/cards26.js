@@ -1,34 +1,33 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  // Header row as per requirements
+  // Table header as in example
   const headerRow = ['Cards (cards26)'];
 
   // Get all card elements (direct children of .swiper-wrapper)
-  const swiperWrapper = element.querySelector(':scope > .swiper-wrapper');
-  if (!swiperWrapper) {
-    // If somehow no cards, just replace with the header table
+  const wrapper = element.querySelector('.swiper-wrapper');
+  if (!wrapper) {
+    // No cards found, replace with empty table
     const table = WebImporter.DOMUtils.createTable([headerRow], document);
     element.replaceWith(table);
     return;
   }
+  const cardEls = wrapper.querySelectorAll(':scope > .teaser-item');
 
-  const cards = swiperWrapper.querySelectorAll(':scope > .teaser-item');
-  const rows = Array.from(cards).map(card => {
-    // image in first cell
+  const rows = [headerRow];
+  cardEls.forEach(card => {
+    // Get the image element (must be first cell)
     const img = card.querySelector('img');
-    // text content in second cell
-    // We'll reference the paragraph within .teaser-item__desc
-    let desc = card.querySelector('.teaser-item__desc');
-    // Fallback: if no desc, use .teaser-item__content or card itself
-    if (!desc) {
-      desc = card.querySelector('.teaser-item__content') || card;
+
+    // Get the content element (second cell)
+    // Prefer the element containing the description
+    let content = card.querySelector('.teaser-item__content');
+    if (!content) {
+      // fallback to the whole card if content not found
+      content = card;
     }
-    // For robustness: handle missing image or desc
-    return [img || document.createTextNode(''), desc || document.createTextNode('')];
+    rows.push([img, content]);
   });
-  const table = WebImporter.DOMUtils.createTable([
-    headerRow,
-    ...rows
-  ], document);
+
+  const table = WebImporter.DOMUtils.createTable(rows, document);
   element.replaceWith(table);
 }

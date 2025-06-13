@@ -1,21 +1,21 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  // Header row as in the example
+  // Table header row as per the example
   const headerRow = ['Cards (cardsNoImages3)'];
-  const rows = [headerRow];
-  // Get all card divs (immediate children)
-  const cardDivs = element.querySelectorAll(':scope > .icon-item');
-  cardDivs.forEach((cardDiv) => {
-    // For each card, use the content div (which contains the text)
-    const contentDiv = cardDiv.querySelector('.icon-item__content');
-    // Defensive: if there is no content, skip this card
-    if (contentDiv) {
-      // Use the contentDiv directly (references existing element, preserves strong, sup, br, etc)
-      rows.push([contentDiv]);
-    }
+
+  // Find all card containers
+  const cardElements = Array.from(element.querySelectorAll(':scope > .icon-item'));
+
+  // Each card: include both the icon and the content in cell
+  const rows = cardElements.map(card => {
+    // get the image/icon and content
+    const icon = card.querySelector('.icon-item__title-wrapper');
+    const content = card.querySelector('.icon-item__content');
+    // put both in the cell, in order
+    return [[icon, content]];
   });
-  // Create the block table
-  const table = WebImporter.DOMUtils.createTable(rows, document);
-  // Replace the original element
+
+  const tableCells = [headerRow, ...rows];
+  const table = WebImporter.DOMUtils.createTable(tableCells, document);
   element.replaceWith(table);
 }

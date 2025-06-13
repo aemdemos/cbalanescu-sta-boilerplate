@@ -1,35 +1,48 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
+  // Prepare header row exactly as in example
   const headerRow = ['Cards (cards15)'];
-  const rows = [headerRow];
-  // Get all immediate card items (div.text-image-item under the block container)
-  const cards = element.querySelectorAll(':scope > div.text-image-item');
-  cards.forEach((card) => {
-    // Image
-    const img = card.querySelector('img');
-    // Content
-    const content = card.querySelector('.text-image-item__content');
-    let textCellContent = [];
-    if (content) {
-      // Title
-      const title = content.querySelector('.text-image-item__title');
+  const rows = [];
+
+  // Select all direct card items
+  const items = element.querySelectorAll(':scope > .text-image-item');
+  items.forEach((item) => {
+    // Image element - referenced directly
+    const img = item.querySelector('img');
+
+    // Content block
+    const contentBlock = item.querySelector('.text-image-item__content');
+    // Compose content cell: title (strong), then description
+    const cellContent = [];
+    if (contentBlock) {
+      const title = contentBlock.querySelector('.text-image-item__title');
       if (title) {
-        // Using strong to match the visual example (bolded title)
+        // Use <strong> to match bolded headings in example
         const strong = document.createElement('strong');
-        strong.innerHTML = title.innerHTML;
-        textCellContent.push(strong);
-        textCellContent.push(document.createElement('br'));
+        strong.textContent = title.textContent.trim();
+        cellContent.push(strong);
       }
-      // Description
-      const desc = content.querySelector('.text-image-item__description');
+      const desc = contentBlock.querySelector('.text-image-item__description');
       if (desc) {
-        Array.from(desc.childNodes).forEach((node) => {
-          textCellContent.push(node);
-        });
+        // If there is a title, add a <br> before description
+        if (title) {
+          cellContent.push(document.createElement('br'));
+        }
+        // Add all children of description, preserving HTML (e.g. <p>, <sup>)
+        Array.from(desc.childNodes).forEach((node) => cellContent.push(node));
       }
     }
-    rows.push([img, textCellContent]);
+    // Always provide two cells: [image, content]
+    rows.push([
+      img || '',
+      cellContent.length ? cellContent : '',
+    ]);
   });
-  const table = WebImporter.DOMUtils.createTable(rows, document);
+
+  const table = WebImporter.DOMUtils.createTable([
+    headerRow,
+    ...rows,
+  ], document);
   element.replaceWith(table);
+  return table;
 }

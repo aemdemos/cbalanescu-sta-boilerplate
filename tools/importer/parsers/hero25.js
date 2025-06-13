@@ -1,31 +1,31 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  // Find the modal content root
+  // Find the main content container
   const content = element.querySelector('.full-size-modal__content');
-  let blockContent = [];
-  if (content) {
-    // Find the main hero sub-block
-    const entryForm = content.querySelector('.priority-tool-entry-form');
-    if (entryForm) {
-      // Collect image, heading, description, and CTA (in order as they appear)
-      const children = Array.from(entryForm.children).filter(el =>
-        el.tagName === 'IMG' ||
-        el.tagName === 'H3' ||
-        el.classList.contains('priority-tool-entry-form__desc') ||
-        el.tagName === 'FORM'
-      );
-      blockContent = children;
-    }
+  if (!content) {
+    element.replaceWith();
+    return;
   }
-  // Fallback: if missing, use the entire modal content
-  if (blockContent.length === 0 && content) {
-    blockContent = [content];
-  }
-  // Build table: header EXACTLY as specified, second row: one cell with all block content
-  const cells = [
-    ['Hero (hero25)'],
-    [blockContent]
+  // Find the image
+  const img = content.querySelector('.priority-tool-entry-form__img');
+  // Find the title (h3)
+  const title = content.querySelector('.priority-tool-entry-form__title');
+  // Find the description
+  const desc = content.querySelector('.priority-tool-entry-form__desc');
+  // Find the CTA button inside the form
+  const ctaForm = content.querySelector('.priority-tool-entry-form__form');
+  // Prepare block content (preserve original order & semantics)
+  const blockContent = [];
+  if (title) blockContent.push(title);
+  if (desc) blockContent.push(desc);
+  if (ctaForm) blockContent.push(ctaForm);
+  // Build table rows as per the markdown example
+  const rows = [
+    ['Hero'],
+    [img ? img : ''],
+    [blockContent.length ? blockContent : ''],
   ];
-  const table = WebImporter.DOMUtils.createTable(cells, document);
+  // Create and replace
+  const table = WebImporter.DOMUtils.createTable(rows, document);
   element.replaceWith(table);
 }

@@ -1,32 +1,27 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  // Find all the direct teaser-icon-item children (each is a column)
+  // Get all teaser-icon-item elements (each is a column)
   const items = Array.from(element.querySelectorAll(':scope > .teaser-icon-item'));
 
-  // Header row: exactly one column, per example
-  const headerRow = ['Columns (columns22)'];
-
-  // Content row: each cell is one column
-  const contentRow = items.map((item) => {
-    const cellContent = [];
-    const icon = item.querySelector('.teaser-icon-item__icon');
-    if (icon) cellContent.push(icon);
+  // For each item/column, include image (if any) and description (if any)
+  const columns = items.map((item) => {
+    const colContent = [];
+    const img = item.querySelector('img');
+    if (img) colContent.push(img);
     const desc = item.querySelector('.teaser-icon-item__desc');
-    if (desc && desc.textContent.trim()) {
-      // Use the first <p> or the desc div
-      const p = desc.querySelector('p');
-      if (p) {
-        cellContent.push(p);
-      } else {
-        cellContent.push(desc);
-      }
+    if (desc) {
+      // Get all child nodes of desc (usually it's just a <p>)
+      colContent.push(...desc.childNodes);
     }
-    // Fallback: If no content, just empty string
-    return cellContent.length ? cellContent : '';
+    if (colContent.length === 1) return colContent[0];
+    if (colContent.length > 1) return colContent;
+    return '';
   });
 
-  // Compose the cells array
-  const cells = [headerRow, contentRow];
-  const table = WebImporter.DOMUtils.createTable(cells, document);
+  // The header row must be a single cell
+  const headerRow = ['Columns (columns22)'];
+  // The content row should have as many cells as columns/items
+  const tableRows = [headerRow, columns];
+  const table = WebImporter.DOMUtils.createTable(tableRows, document);
   element.replaceWith(table);
 }

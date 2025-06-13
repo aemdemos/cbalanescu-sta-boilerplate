@@ -1,28 +1,41 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  // Build header row exactly as in the block description
+  // Table header exactly as required
   const headerRow = ['Cards (cards17)'];
-  const rows = [];
 
-  // Find all direct card elements
-  const cardDivs = element.querySelectorAll(':scope .swiper-wrapper > .teaser-item');
+  // Get all card items (teaser-item direct children of .swiper-wrapper)
+  const wrapper = element.querySelector('.swiper-wrapper');
+  if (!wrapper) {
+    // Fallback: if not found, remove the original element and return
+    element.remove();
+    return;
+  }
+  const cardEls = wrapper.querySelectorAll(':scope > .teaser-item');
 
-  cardDivs.forEach(card => {
-    // Find the image in the card (if present)
+  const rows = Array.from(cardEls).map(card => {
+    // Image (mandatory)
     const img = card.querySelector('img');
-    // Find the text content
-    const desc = card.querySelector('.teaser-item__desc');
-    // Edge case: if .teaser-item__desc or img is missing, gracefully degrade
-    const imgCell = img ? img : '';
-    const descCell = desc ? desc : '';
-    rows.push([imgCell, descCell]);
+    // Text: gather the card content block (usually a .teaser-item__desc)
+    // If the .teaser-item__desc is missing, fallback to .teaser-item__content or all text nodes
+    let textCell = null;
+    let desc = card.querySelector('.teaser-item__desc');
+    if (desc) {
+      textCell = desc;
+    } else {
+      // fallback: whole .teaser-item__content
+      let content = card.querySelector('.teaser-item__content');
+      if (content) {
+        textCell = content;
+      } else {
+        // fallback: just all text
+        textCell = document.createElement('div');
+        textCell.textContent = card.textContent.trim();
+      }
+    }
+    return [img, textCell];
   });
 
-  // Compose table: header then all card rows
-  const table = WebImporter.DOMUtils.createTable([
-    headerRow,
-    ...rows
-  ], document);
-
+  const tableArray = [headerRow, ...rows];
+  const table = WebImporter.DOMUtils.createTable(tableArray, document);
   element.replaceWith(table);
 }

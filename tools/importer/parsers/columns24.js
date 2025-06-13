@@ -1,91 +1,25 @@
 /* global WebImporter */
 export default function parse(element, { document }) {
-  // Header row
-  const headerRow = ['Columns (columns24)'];
+  // Get the left (text) and right (video) columns
+  const textBlock = element.querySelector('.hero-banner-video__text');
+  const videoWrapper = element.querySelector('.hero-banner-video__video-wrapper');
+  // Get the transcript block, if present
+  const transcriptBlock = element.querySelector('.hero-banner-video__transcript');
 
-  // Try to locate the hero area with two columns
-  const hero = element.querySelector('.hero-banner-video');
+  const leftCell = textBlock || document.createElement('div');
+  const rightCell = videoWrapper || document.createElement('div');
 
-  let leftCol = null;
-  let rightCol = null;
-
-  if (hero) {
-    leftCol = hero.querySelector('.hero-banner-video__text');
-    rightCol = hero.querySelector('.hero-banner-video__video-wrapper');
-    // Add transcript (if present) to rightCol
-    const transcript = element.querySelector('.hero-banner-video__transcript');
-    if (rightCol && transcript) {
-      rightCol.appendChild(transcript);
-    }
-    // Fix: convert non-image src elements in rightCol to links
-    if (rightCol) {
-      // Convert videos with src
-      const videos = Array.from(rightCol.querySelectorAll('video[src]'));
-      videos.forEach((vid) => {
-        // Only convert if src exists and is non-empty
-        const src = vid.getAttribute('src');
-        if (src && src !== '' && vid.tagName.toLowerCase() !== 'img') {
-          const link = document.createElement('a');
-          link.href = src;
-          link.textContent = src;
-          vid.replaceWith(link);
-        }
-      });
-      // Convert iframes with src
-      const iframes = Array.from(rightCol.querySelectorAll('iframe[src]'));
-      iframes.forEach((iframe) => {
-        const src = iframe.getAttribute('src');
-        if (src && src !== '') {
-          const link = document.createElement('a');
-          link.href = src;
-          link.textContent = src;
-          iframe.replaceWith(link);
-        }
-      });
-    }
+  // If transcript exists and has visible content, place it in the left column under the text (as is common for this type of block)
+  if (transcriptBlock && transcriptBlock.textContent.trim()) {
+    leftCell.appendChild(transcriptBlock);
   }
 
-  // Fallback: use first two divs inside the element
-  if (!leftCol || !rightCol) {
-    const children = Array.from(element.querySelectorAll(':scope > div'));
-    leftCol = leftCol || children[0];
-    rightCol = rightCol || children[1];
-    // Fix: convert non-image src elements in rightCol to links (fallback)
-    if (rightCol) {
-      const videos = Array.from(rightCol.querySelectorAll('video[src]'));
-      videos.forEach((vid) => {
-        const src = vid.getAttribute('src');
-        if (src && src !== '' && vid.tagName.toLowerCase() !== 'img') {
-          const link = document.createElement('a');
-          link.href = src;
-          link.textContent = src;
-          vid.replaceWith(link);
-        }
-      });
-      const iframes = Array.from(rightCol.querySelectorAll('iframe[src]'));
-      iframes.forEach((iframe) => {
-        const src = iframe.getAttribute('src');
-        if (src && src !== '') {
-          const link = document.createElement('a');
-          link.href = src;
-          link.textContent = src;
-          iframe.replaceWith(link);
-        }
-      });
-    }
-  }
-  if (!leftCol) {
-    leftCol = document.createElement('div');
-  }
-  if (!rightCol) {
-    rightCol = document.createElement('div');
-  }
+  // The table must have the header as a single cell, then a row with two cells
+  const rows = [
+    ['Columns (columns24)'],
+    [leftCell, rightCell]
+  ];
 
-  const columnsRow = [leftCol, rightCol];
-  const table = WebImporter.DOMUtils.createTable([
-    headerRow,
-    columnsRow
-  ], document);
-
+  const table = WebImporter.DOMUtils.createTable(rows, document);
   element.replaceWith(table);
 }

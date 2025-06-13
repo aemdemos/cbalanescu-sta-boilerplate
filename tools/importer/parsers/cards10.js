@@ -3,40 +3,48 @@ export default function parse(element, { document }) {
   const headerRow = ['Cards (cards10)'];
   const rows = [headerRow];
 
-  // Get all direct .teaser-item children
-  const items = element.querySelectorAll(':scope > .teaser-item');
-  items.forEach(item => {
-    // Image for first cell (reference the DOM node directly)
-    const img = item.querySelector('img');
+  // Find all card items (direct children)
+  const cards = element.querySelectorAll(':scope > .teaser-item');
 
-    // Text content for second cell
-    const content = item.querySelector('.teaser-item__content');
+  cards.forEach(card => {
+    // First column: the image (mandatory)
+    const img = card.querySelector('img');
+
+    // Second column: text content (title, description, CTA)
+    const content = card.querySelector('.teaser-item__content');
     const cellContent = [];
 
-    // Title (as <strong> for heading style per example)
-    const titleEl = content && content.querySelector('.teaser-item__title');
-    if (titleEl && titleEl.textContent.trim()) {
+    // Title (styled as bold)
+    const titleDiv = content && content.querySelector('.teaser-item__title');
+    if (titleDiv) {
       const strong = document.createElement('strong');
-      strong.textContent = titleEl.textContent.trim();
+      strong.textContent = titleDiv.textContent.trim();
       cellContent.push(strong);
       cellContent.push(document.createElement('br'));
     }
-    // Description (keep all child nodes, reference if possible)
-    const descEl = content && content.querySelector('.teaser-item__desc');
-    if (descEl) {
-      descEl.childNodes.forEach(node => {
-        // Only include non-empty text or element nodes
-        if (node.nodeType === 1 || (node.nodeType === 3 && node.textContent.trim())) {
-          cellContent.push(node);
-        }
-      });
+
+    // Description
+    const descDiv = content && content.querySelector('.teaser-item__desc');
+    if (descDiv) {
+      // If a <p> child is present, use it, else use textContent
+      const paragraph = descDiv.querySelector('p');
+      if (paragraph) {
+        cellContent.push(paragraph);
+      } else if (descDiv.textContent.trim()) {
+        cellContent.push(document.createTextNode(descDiv.textContent.trim()));
+      }
       cellContent.push(document.createElement('br'));
     }
-    // CTA link, referenced directly
-    const ctaEl = content && content.querySelector('a');
-    if (ctaEl) {
-      cellContent.push(ctaEl);
+
+    // CTA (link at the bottom)
+    const cta = content && content.querySelector('a');
+    if (cta) {
+      cellContent.push(cta);
     }
+
+    // Clean up any leading/trailing <br>s
+    while (cellContent[0] && cellContent[0].nodeType === 1 && cellContent[0].tagName === 'BR') cellContent.shift();
+    while (cellContent[cellContent.length-1] && cellContent[cellContent.length-1].nodeType === 1 && cellContent[cellContent.length-1].tagName === 'BR') cellContent.pop();
 
     rows.push([
       img,
@@ -44,6 +52,6 @@ export default function parse(element, { document }) {
     ]);
   });
 
-  const table = WebImporter.DOMUtils.createTable(rows, document);
-  element.replaceWith(table);
+  const block = WebImporter.DOMUtils.createTable(rows, document);
+  element.replaceWith(block);
 }
