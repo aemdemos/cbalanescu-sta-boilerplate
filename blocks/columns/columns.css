@@ -1,5 +1,6 @@
 
 
+
 /* --- COLUMN LAYOUT BASE --- */
 .columns > div {
   display: flex;
@@ -550,4 +551,12 @@
   background: #fff;
   padding: 28px 0 0;
   display: block;
+}
+
+/* ---- MERGED .columns.columns22 ---- */
+.columns.columns22 {
+  padding: 56px 0 48px;
+  display: block;
+  background: #fff;
+  box-sizing: border-box;
 }
