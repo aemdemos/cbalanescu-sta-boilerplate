@@ -1,4 +1,5 @@
 
+
 /* ---- CARDS LAYOUT ---- */
 
 .cards > ul {
@@ -603,5 +604,14 @@
   padding: 0 0 1em;
   margin: 0 auto;
   background: #fff;
+  box-sizing: border-box;
+}
+
+/* === MERGED SELECTOR FOR .cards.cards17 === */
+.cards.cards17 {
+  background: #e9f6d5;
+  padding: 48px 0 32px;
+  max-width: 1232px;
+  margin: 0 auto;
   box-sizing: border-box;
 }
