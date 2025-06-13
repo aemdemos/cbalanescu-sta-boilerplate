@@ -1,3 +1,6 @@
+/*
+  Fixed and modernized CSS for hero block
+*/
 
 .hero-container .hero-wrapper {
   max-width: unset;
@@ -38,14 +41,15 @@
 }
 
 .hero.hero4 {
-  background: #F4FFE3;
-  border: 2px solid #C5F23F;
   position: relative;
   width: 100%;
-  min-height: 400px;
+  min-height: 407px;
+  background: #f2fadb;
+  border: 2px solid #c3ec2d;
   overflow: hidden;
   box-sizing: border-box;
   padding: 0;
+  display: block;
 }
 
 /* Ensure hero content is full width and image fills parent */
@@ -83,7 +87,54 @@
   box-sizing: border-box;
 }
 
-/* Text container: slightly larger font, more vertical padding and a touch more left margin */
+.hero.hero4 > div:last-child {
+  position: absolute;
+  left: 0;
+  top: 18px;
+  height: calc(100% - 18px);
+  width: 100%;
+  z-index: 3;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  pointer-events: none;
+}
+
+.hero.hero4 > div:first-child {
+  position: absolute;
+  top: 18px;
+  left: 0;
+  width: 100%;
+  height: calc(100% - 18px);
+  z-index: 1;
+  display: flex;
+}
+
+.hero.hero4 > div:first-child > div,
+.hero.hero4 picture,
+.hero.hero4 img {
+  width: 100%;
+  height: 100%;
+  min-height: 389px;
+  object-fit: cover;
+  display: block;
+}
+
+.hero.hero4::before {
+  display: block;
+  width: 100%;
+  height: 18px;
+  background: #f2fadb;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  pointer-events: none;
+  content: "";
+}
+
+/* Merged and deduped .hero.hero4 h2 rules, replaced deprecated word-break with overflow-wrap */
 .hero.hero4 h2 {
   position: absolute;
   z-index: 2;
@@ -92,35 +143,48 @@
   transform: translateY(-50%);
   background: #fff;
   border-radius: 24px;
-  padding: 36px 40px;
-  margin-left: 36px;
-  box-shadow: 0 2px 16px rgba(0,0,0,0.04);
-  color: #222;
-  font-size: 2.65rem;
-  font-family: var(--heading-font-family);
+  padding: 40px 40px 36px;
+  margin-left: 20px;
+  box-shadow: none;
+  color: #232323;
+  font-size: 2rem;
+  font-family: Inter, Arial, sans-serif;
   font-weight: 700;
-  line-height: 1.13;
-  max-width: 360px;
+  line-height: 1.2;
+  max-width: 314px;
   box-sizing: border-box;
-  word-break: break-word;
+  overflow-wrap: break-word;
   white-space: normal;
   margin-top: 0;
   margin-bottom: 0;
-  display: flex;
-  align-items: center;
+  text-align: left;
+  display: block;
+  pointer-events: all;
 }
 
-/* Responsive adjustments */
-@media (max-width: 900px) {
-  .hero.hero4 h2 {
-    padding: 18px 10px;
-    margin-left: 3vw;
-    font-size: 1.2rem;
-    max-width: 90vw;
-  }
-  .hero.hero4,
-  .hero.hero4 picture,
-  .hero.hero4 img {
+@media (width <= 900px) {
+  .hero.hero4 {
     min-height: 200px;
+  }
+
+  .hero.hero4 > div:first-child {
+    height: calc(100% - 12px);
+    top: 12px;
+  }
+
+  .hero.hero4::before {
+    height: 12px;
+  }
+
+  .hero.hero4 > div:last-child {
+    height: calc(100% - 12px);
+    top: 12px;
+  }
+
+  .hero.hero4 h2 {
+    padding: 14px 8px;
+    margin-left: 2vw;
+    font-size: 1.1rem;
+    max-width: 90vw;
   }
 }
